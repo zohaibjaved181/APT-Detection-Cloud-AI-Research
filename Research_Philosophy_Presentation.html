@@ -1,0 +1,596 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Research Philosophy - APT Detection in Cloud Networks Using AI</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --primary: #6366f1;
+            --accent: #06b6d4;
+            --purple: #8b5cf6;
+            --dark: #0f172a;
+            --darker: #020617;
+            --card-bg: rgba(15, 23, 42, 0.7);
+            --text: #e2e8f0;
+            --muted: #94a3b8;
+            --green: #22c55e;
+            --red: #ef4444;
+            --orange: #fb923c;
+            --yellow: #facc15;
+        }
+
+        html, body {
+            font-family: 'Inter', sans-serif;
+            background: var(--darker);
+            color: var(--text);
+            overflow-x: hidden;
+            scroll-behavior: smooth;
+        }
+
+        .slide {
+            min-height: 100vh;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            padding: 60px 80px;
+            overflow: hidden;
+        }
+
+        .slide::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: radial-gradient(ellipse at 20% 50%, rgba(99,102,241,0.08) 0%, transparent 50%),
+                        radial-gradient(ellipse at 80% 20%, rgba(6,182,212,0.06) 0%, transparent 50%),
+                        radial-gradient(ellipse at 50% 80%, rgba(139,92,246,0.05) 0%, transparent 50%);
+            pointer-events: none;
+        }
+
+        .grid-bg {
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-image:
+                linear-gradient(rgba(99,102,241,0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(99,102,241,0.03) 1px, transparent 1px);
+            background-size: 60px 60px;
+            animation: gridMove 20s linear infinite;
+        }
+
+        @keyframes gridMove {
+            0% { transform: translate(0, 0); }
+            100% { transform: translate(60px, 60px); }
+        }
+
+        .orb {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(60px);
+            opacity: 0.4;
+            animation: float 8s ease-in-out infinite;
+        }
+        .orb-1 { width: 300px; height: 300px; background: var(--primary); top: -100px; right: -50px; }
+        .orb-2 { width: 200px; height: 200px; background: var(--accent); bottom: -80px; left: -40px; animation-delay: -3s; }
+        .orb-3 { width: 250px; height: 250px; background: var(--purple); top: 50%; left: 60%; animation-delay: -5s; }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0) scale(1); }
+            50% { transform: translateY(-30px) scale(1.05); }
+        }
+
+        .content {
+            position: relative;
+            z-index: 2;
+            width: 100%;
+            max-width: 1200px;
+        }
+
+        .slide-number {
+            position: absolute;
+            bottom: 30px;
+            right: 40px;
+            font-size: 14px;
+            color: var(--muted);
+            font-weight: 500;
+            letter-spacing: 2px;
+        }
+
+        h1 { font-size: 3.2rem; font-weight: 800; line-height: 1.1; margin-bottom: 20px; }
+        h2 { font-size: 2.4rem; font-weight: 700; margin-bottom: 25px; }
+        h3 { font-size: 1.3rem; font-weight: 600; margin-bottom: 12px; }
+        p { font-size: 1.05rem; line-height: 1.7; color: var(--muted); }
+
+        .gradient-text {
+            background: linear-gradient(135deg, #06b6d4 0%, #6366f1 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .tag {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-right: 8px;
+            margin-bottom: 8px;
+        }
+        .tag-primary { background: rgba(99,102,241,0.15); color: #818cf8; border: 1px solid rgba(99,102,241,0.3); }
+        .tag-accent { background: rgba(6,182,212,0.15); color: #22d3ee; border: 1px solid rgba(6,182,212,0.3); }
+        .tag-purple { background: rgba(139,92,246,0.15); color: #a78bfa; border: 1px solid rgba(139,92,246,0.3); }
+        .tag-green { background: rgba(34,197,94,0.15); color: #4ade80; border: 1px solid rgba(34,197,94,0.3); }
+        .tag-red { background: rgba(239,68,68,0.15); color: #f87171; border: 1px solid rgba(239,68,68,0.3); }
+
+        .card {
+            background: var(--card-bg);
+            border: 1px solid rgba(99,102,241,0.15);
+            border-radius: 16px;
+            padding: 28px;
+            backdrop-filter: blur(20px);
+            transition: all 0.3s ease;
+        }
+        .card:hover {
+            border-color: rgba(99,102,241,0.4);
+            transform: translateY(-4px);
+            box-shadow: 0 20px 60px rgba(99,102,241,0.1);
+        }
+
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+        .grid-4 { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 18px; }
+
+        .icon-box {
+            width: 48px; height: 48px;
+            border-radius: 12px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.4rem;
+            margin-bottom: 14px;
+        }
+
+        .nav-dots {
+            position: fixed;
+            right: 30px;
+            top: 50%;
+            transform: translateY(-50%);
+            z-index: 100;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .nav-dot {
+            width: 10px; height: 10px;
+            border-radius: 50%;
+            background: rgba(99,102,241,0.3);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .nav-dot:hover, .nav-dot.active {
+            background: var(--primary);
+            transform: scale(1.3);
+        }
+
+        .strength { color: #4ade80; }
+        .limitation { color: #f87171; }
+
+        .philosophy-card {
+            border-top: 3px solid;
+            padding-top: 20px;
+        }
+
+        .check-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            margin-bottom: 12px;
+            font-size: 0.95rem;
+        }
+        .check-icon {
+            flex-shrink: 0;
+            width: 22px; height: 22px;
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 0.7rem;
+            font-weight: 700;
+        }
+
+        .flow-box {
+            padding: 16px 24px;
+            border-radius: 12px;
+            text-align: center;
+            font-weight: 600;
+            font-size: 0.95rem;
+        }
+        .flow-arrow {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: var(--muted);
+        }
+
+        .highlight-box {
+            background: rgba(6,182,212,0.05);
+            border: 1px solid rgba(6,182,212,0.25);
+            border-radius: 12px;
+            padding: 20px 24px;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+
+<!-- Navigation -->
+<div class="nav-dots">
+    <a class="nav-dot active" href="#slide1"></a>
+    <a class="nav-dot" href="#slide2"></a>
+    <a class="nav-dot" href="#slide3"></a>
+    <a class="nav-dot" href="#slide4"></a>
+    <a class="nav-dot" href="#slide5"></a>
+</div>
+
+<!-- SLIDE 1: Research Topic -->
+<section class="slide" id="slide1">
+    <div class="grid-bg"></div>
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+    <div class="orb orb-3"></div>
+    <div class="content" style="text-align: center;">
+        <div style="margin-bottom: 25px;">
+            <span class="tag tag-primary">Research Methodology</span>
+            <span class="tag tag-accent">Philosophy & Approach</span>
+        </div>
+        <h1 style="max-width: 950px; margin: 0 auto;">
+            Detection of <span class="gradient-text">Advanced Persistent Threats</span> in Cloud Networks Using <span class="gradient-text">Artificial Intelligence</span>
+        </h1>
+        <p style="max-width: 800px; margin: 25px auto 0; font-size: 1.15rem;">
+            This research investigates the application of AI and machine learning techniques to detect sophisticated, multi-stage Advanced Persistent Threats (APTs) targeting cloud computing infrastructure. The study aims to develop a novel, explainable detection framework that addresses gaps in real-time processing, adversarial robustness, and cross-stage threat correlation.
+        </p>
+        <div class="highlight-box" style="max-width: 800px; margin: 30px auto 0;">
+            <p style="color: var(--text); font-size: 1rem; margin: 0;">
+                <strong style="color: #22d3ee;">Research Focus:</strong> Empirical evaluation of AI models on cloud network data, measuring detection accuracy, false positive rates, inference latency, and explainability of threat classifications across multi-cloud environments.
+            </p>
+        </div>
+        <div style="margin-top: 35px; display: flex; justify-content: center; gap: 16px; flex-wrap: wrap;">
+            <span class="tag tag-primary">Cybersecurity</span>
+            <span class="tag tag-accent">Cloud Computing</span>
+            <span class="tag tag-purple">Deep Learning</span>
+            <span class="tag tag-green">Anomaly Detection</span>
+            <span class="tag tag-red">Threat Intelligence</span>
+        </div>
+    </div>
+    <div class="slide-number">01 / 05</div>
+</section>
+
+<!-- SLIDE 2: Research Philosophies -->
+<section class="slide" id="slide2">
+    <div class="grid-bg"></div>
+    <div class="orb orb-2" style="top: 10%; right: 5%;"></div>
+    <div class="content">
+        <span class="tag tag-purple">Epistemology</span>
+        <h2>Research <span class="gradient-text">Philosophies</span></h2>
+        <p style="max-width: 750px; margin-bottom: 30px;">An examination of four major research philosophies and their applicability to AI-based APT detection research</p>
+
+        <div class="grid-4">
+            <!-- Positivism -->
+            <div class="card philosophy-card" style="border-top-color: #6366f1;">
+                <div class="icon-box" style="background: rgba(99,102,241,0.15);">&#x1F52C;</div>
+                <h3 style="color: #818cf8;">Positivism</h3>
+                <p style="font-size: 0.82rem; margin-bottom: 14px;">Knowledge through observable, measurable facts. Emphasizes objectivity, quantification, and hypothesis testing.</p>
+                <div style="margin-bottom: 10px;">
+                    <div style="font-size: 0.75rem; font-weight: 600; color: #4ade80; margin-bottom: 6px;">STRENGTHS</div>
+                    <p style="font-size: 0.78rem;">Enables quantitative evaluation of detection accuracy, precision, recall. Supports reproducible experiments on benchmark datasets.</p>
+                </div>
+                <div>
+                    <div style="font-size: 0.75rem; font-weight: 600; color: #f87171; margin-bottom: 6px;">LIMITATIONS</div>
+                    <p style="font-size: 0.78rem;">May overlook contextual factors of APT behavior. Cannot capture the evolving, adaptive nature of threat actors.</p>
+                </div>
+            </div>
+
+            <!-- Interpretivism -->
+            <div class="card philosophy-card" style="border-top-color: #06b6d4;">
+                <div class="icon-box" style="background: rgba(6,182,212,0.15);">&#x1F4AC;</div>
+                <h3 style="color: #22d3ee;">Interpretivism</h3>
+                <p style="font-size: 0.82rem; margin-bottom: 14px;">Understanding through subjective experiences and meanings. Focuses on context, interpretation, and qualitative insight.</p>
+                <div style="margin-bottom: 10px;">
+                    <div style="font-size: 0.75rem; font-weight: 600; color: #4ade80; margin-bottom: 6px;">STRENGTHS</div>
+                    <p style="font-size: 0.78rem;">Useful for understanding SOC analyst decision-making and how humans interpret AI-generated threat alerts.</p>
+                </div>
+                <div>
+                    <div style="font-size: 0.75rem; font-weight: 600; color: #f87171; margin-bottom: 6px;">LIMITATIONS</div>
+                    <p style="font-size: 0.78rem;">Not ideal for validating AI model performance. Lacks generalizability needed for system-level threat detection.</p>
+                </div>
+            </div>
+
+            <!-- Pragmatism -->
+            <div class="card philosophy-card" style="border-top-color: #8b5cf6;">
+                <div class="icon-box" style="background: rgba(139,92,246,0.15);">&#x2699;</div>
+                <h3 style="color: #a78bfa;">Pragmatism</h3>
+                <p style="font-size: 0.82rem; margin-bottom: 14px;">Knowledge judged by practical consequences. Supports mixed methods — whatever works best for the research problem.</p>
+                <div style="margin-bottom: 10px;">
+                    <div style="font-size: 0.75rem; font-weight: 600; color: #4ade80; margin-bottom: 6px;">STRENGTHS</div>
+                    <p style="font-size: 0.78rem;">Allows combining quantitative model metrics with qualitative expert validation. Flexible and problem-oriented.</p>
+                </div>
+                <div>
+                    <div style="font-size: 0.75rem; font-weight: 600; color: #f87171; margin-bottom: 6px;">LIMITATIONS</div>
+                    <p style="font-size: 0.78rem;">May lack philosophical rigour. Risk of inconsistency when mixing paradigms without clear justification.</p>
+                </div>
+            </div>
+
+            <!-- Realism -->
+            <div class="card philosophy-card" style="border-top-color: #22c55e;">
+                <div class="icon-box" style="background: rgba(34,197,94,0.15);">&#x1F30D;</div>
+                <h3 style="color: #4ade80;">Realism</h3>
+                <p style="font-size: 0.82rem; margin-bottom: 14px;">Reality exists independently of observation. Accepts both observable data and underlying causal mechanisms.</p>
+                <div style="margin-bottom: 10px;">
+                    <div style="font-size: 0.75rem; font-weight: 600; color: #4ade80; margin-bottom: 6px;">STRENGTHS</div>
+                    <p style="font-size: 0.78rem;">Acknowledges complex, layered nature of APTs. Supports exploring causal mechanisms behind detection success/failure.</p>
+                </div>
+                <div>
+                    <div style="font-size: 0.75rem; font-weight: 600; color: #f87171; margin-bottom: 6px;">LIMITATIONS</div>
+                    <p style="font-size: 0.78rem;">Harder to operationalize in purely computational experiments. May require broader research scope.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="slide-number">02 / 05</div>
+</section>
+
+<!-- SLIDE 3: Selected Research Philosophy -->
+<section class="slide" id="slide3">
+    <div class="grid-bg"></div>
+    <div class="orb orb-1" style="bottom: 10%; left: 5%;"></div>
+    <div class="content">
+        <span class="tag tag-green">Selected Philosophy</span>
+        <h2>Positivism — <span class="gradient-text">The Most Suitable Philosophy</span></h2>
+        <p style="max-width: 750px; margin-bottom: 30px;">Positivism is selected as the guiding research philosophy for this study on AI-based APT detection in cloud networks</p>
+
+        <div class="grid-2">
+            <div>
+                <div class="card" style="margin-bottom: 20px; border-color: rgba(99,102,241,0.3);">
+                    <h3 style="color: #818cf8;">&#x1F3AF; Why Positivism?</h3>
+                    <div class="check-item">
+                        <div class="check-icon" style="background: rgba(34,197,94,0.15); color: #4ade80;">&#x2713;</div>
+                        <span style="color: var(--muted); font-size: 0.9rem;">Research relies on <strong style="color: var(--text);">quantitative, measurable outcomes</strong> — accuracy, precision, recall, F1-score, inference time</span>
+                    </div>
+                    <div class="check-item">
+                        <div class="check-icon" style="background: rgba(34,197,94,0.15); color: #4ade80;">&#x2713;</div>
+                        <span style="color: var(--muted); font-size: 0.9rem;">Requires <strong style="color: var(--text);">objective, reproducible experiments</strong> using standardized datasets and controlled conditions</span>
+                    </div>
+                    <div class="check-item">
+                        <div class="check-icon" style="background: rgba(34,197,94,0.15); color: #4ade80;">&#x2713;</div>
+                        <span style="color: var(--muted); font-size: 0.9rem;">Involves <strong style="color: var(--text);">hypothesis testing</strong> — e.g., "AI model X detects APTs with significantly higher accuracy than baseline"</span>
+                    </div>
+                    <div class="check-item">
+                        <div class="check-icon" style="background: rgba(34,197,94,0.15); color: #4ade80;">&#x2713;</div>
+                        <span style="color: var(--muted); font-size: 0.9rem;">Supports <strong style="color: var(--text);">generalizability</strong> of findings across different cloud environments and attack scenarios</span>
+                    </div>
+                    <div class="check-item">
+                        <div class="check-icon" style="background: rgba(34,197,94,0.15); color: #4ade80;">&#x2713;</div>
+                        <span style="color: var(--muted); font-size: 0.9rem;">Aligns with <strong style="color: var(--text);">scientific method</strong> dominant in computer science and cybersecurity research</span>
+                    </div>
+                </div>
+            </div>
+            <div>
+                <div class="card" style="margin-bottom: 20px; border-color: rgba(6,182,212,0.3);">
+                    <h3 style="color: #22d3ee;">&#x1F4CA; Alignment with Research Problem</h3>
+                    <p style="font-size: 0.9rem; margin-bottom: 16px;">The research problem demands:</p>
+                    <ul style="list-style: none; padding: 0;">
+                        <li style="padding: 8px 0; border-bottom: 1px solid rgba(99,102,241,0.08); font-size: 0.88rem; color: var(--muted);">
+                            <strong style="color: var(--text);">Empirical validation</strong> of AI model performance on network traffic data
+                        </li>
+                        <li style="padding: 8px 0; border-bottom: 1px solid rgba(99,102,241,0.08); font-size: 0.88rem; color: var(--muted);">
+                            <strong style="color: var(--text);">Statistical comparison</strong> of multiple detection algorithms
+                        </li>
+                        <li style="padding: 8px 0; border-bottom: 1px solid rgba(99,102,241,0.08); font-size: 0.88rem; color: var(--muted);">
+                            <strong style="color: var(--text);">Controlled experiments</strong> with training/testing splits, cross-validation
+                        </li>
+                        <li style="padding: 8px 0; border-bottom: 1px solid rgba(99,102,241,0.08); font-size: 0.88rem; color: var(--muted);">
+                            <strong style="color: var(--text);">Value-free observation</strong> — system performance is objective, not subjective
+                        </li>
+                        <li style="padding: 8px 0; font-size: 0.88rem; color: var(--muted);">
+                            <strong style="color: var(--text);">Causal relationships</strong> — identifying which features/architectures cause better detection
+                        </li>
+                    </ul>
+                </div>
+                <div class="highlight-box">
+                    <p style="color: var(--text); font-size: 0.9rem; margin: 0;">
+                        <strong style="color: #22d3ee;">Key Insight:</strong> Since APT detection is fundamentally a classification/anomaly detection problem evaluated through numerical metrics, positivism provides the most rigorous framework for validating our AI approach.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="slide-number">03 / 05</div>
+</section>
+
+<!-- SLIDE 4: Research Approach -->
+<section class="slide" id="slide4">
+    <div class="grid-bg"></div>
+    <div class="orb orb-3" style="top: 20%; left: 10%;"></div>
+    <div class="content">
+        <span class="tag tag-accent">Research Approach</span>
+        <h2>Deductive Approach — <span class="gradient-text">Theory to Evidence</span></h2>
+        <p style="max-width: 750px; margin-bottom: 30px;">A deductive research approach is adopted, moving from established theories and hypotheses to empirical testing and validation</p>
+
+        <div class="grid-2">
+            <div>
+                <div class="card" style="margin-bottom: 20px;">
+                    <h3 style="color: #a78bfa;">&#x1F504; Deductive vs Inductive</h3>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 16px;">
+                        <div style="padding: 16px; background: rgba(99,102,241,0.08); border-radius: 10px; border: 1px solid rgba(99,102,241,0.2);">
+                            <div style="font-weight: 700; color: #818cf8; margin-bottom: 8px; font-size: 0.85rem;">DEDUCTIVE &#x2713;</div>
+                            <p style="font-size: 0.78rem;">Theory &#x2192; Hypothesis &#x2192; Data Collection &#x2192; Testing &#x2192; Confirmation/Rejection</p>
+                        </div>
+                        <div style="padding: 16px; background: rgba(239,68,68,0.05); border-radius: 10px; border: 1px solid rgba(239,68,68,0.15);">
+                            <div style="font-weight: 700; color: #f87171; margin-bottom: 8px; font-size: 0.85rem;">INDUCTIVE &#x2717;</div>
+                            <p style="font-size: 0.78rem;">Observation &#x2192; Pattern &#x2192; Hypothesis &#x2192; Theory (exploratory, less suitable here)</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h3 style="color: #22d3ee;">&#x1F9EA; Deductive Process for This Study</h3>
+                    <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 12px;">
+                        <div class="flow-box" style="background: rgba(99,102,241,0.1); border: 1px solid rgba(99,102,241,0.3); color: #818cf8;">
+                            1. Theory: AI/DL can model complex, non-linear attack patterns
+                        </div>
+                        <div class="flow-arrow">&#x2B07;</div>
+                        <div class="flow-box" style="background: rgba(6,182,212,0.1); border: 1px solid rgba(6,182,212,0.3); color: #22d3ee;">
+                            2. Hypothesis: Proposed hybrid model achieves &gt;95% detection rate
+                        </div>
+                        <div class="flow-arrow">&#x2B07;</div>
+                        <div class="flow-box" style="background: rgba(139,92,246,0.1); border: 1px solid rgba(139,92,246,0.3); color: #a78bfa;">
+                            3. Experiment: Train/test on cloud APT datasets with baselines
+                        </div>
+                        <div class="flow-arrow">&#x2B07;</div>
+                        <div class="flow-box" style="background: rgba(34,197,94,0.1); border: 1px solid rgba(34,197,94,0.3); color: #4ade80;">
+                            4. Validate: Statistical tests confirm/reject hypothesis
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div>
+                <div class="card" style="border-color: rgba(34,197,94,0.3);">
+                    <h3 style="color: #4ade80;">&#x2705; Why Deductive is Suitable</h3>
+                    <div class="check-item">
+                        <div class="check-icon" style="background: rgba(34,197,94,0.15); color: #4ade80;">1</div>
+                        <span style="color: var(--muted); font-size: 0.88rem;"><strong style="color: var(--text);">Existing theoretical foundation:</strong> Established ML/DL theories on pattern recognition and anomaly detection provide clear starting hypotheses</span>
+                    </div>
+                    <div class="check-item">
+                        <div class="check-icon" style="background: rgba(34,197,94,0.15); color: #4ade80;">2</div>
+                        <span style="color: var(--muted); font-size: 0.88rem;"><strong style="color: var(--text);">Testable predictions:</strong> We can formulate specific, falsifiable hypotheses about model performance metrics</span>
+                    </div>
+                    <div class="check-item">
+                        <div class="check-icon" style="background: rgba(34,197,94,0.15); color: #4ade80;">3</div>
+                        <span style="color: var(--muted); font-size: 0.88rem;"><strong style="color: var(--text);">Structured methodology:</strong> Allows systematic comparison of proposed vs. existing approaches</span>
+                    </div>
+                    <div class="check-item">
+                        <div class="check-icon" style="background: rgba(34,197,94,0.15); color: #4ade80;">4</div>
+                        <span style="color: var(--muted); font-size: 0.88rem;"><strong style="color: var(--text);">Generalizability:</strong> Results can be applied beyond the specific test dataset to broader cloud environments</span>
+                    </div>
+                    <div class="check-item">
+                        <div class="check-icon" style="background: rgba(34,197,94,0.15); color: #4ade80;">5</div>
+                        <span style="color: var(--muted); font-size: 0.88rem;"><strong style="color: var(--text);">Alignment with positivism:</strong> Deductive approach naturally complements the positivist philosophy selected</span>
+                    </div>
+                    <div class="check-item">
+                        <div class="check-icon" style="background: rgba(34,197,94,0.15); color: #4ade80;">6</div>
+                        <span style="color: var(--muted); font-size: 0.88rem;"><strong style="color: var(--text);">Benchmarking standard:</strong> Consistent with how ML/AI research is conducted and peer-reviewed in top venues</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="slide-number">04 / 05</div>
+</section>
+
+<!-- SLIDE 5: Final Justification -->
+<section class="slide" id="slide5">
+    <div class="grid-bg"></div>
+    <div class="orb orb-1" style="top: 60%; right: 10%;"></div>
+    <div class="orb orb-2" style="top: 5%; left: 50%;"></div>
+    <div class="content">
+        <span class="tag tag-green">Final Justification</span>
+        <h2>How Philosophy & Approach <span class="gradient-text">Support the Research</span></h2>
+        <p style="max-width: 750px; margin-bottom: 30px;">Demonstrating coherent alignment between positivism + deductive approach and research objectives, data collection, and analysis</p>
+
+        <div class="grid-2">
+            <div>
+                <div class="card" style="margin-bottom: 20px; border-color: rgba(99,102,241,0.3);">
+                    <h3 style="color: #818cf8;">&#x1F3AF; Supporting Research Objectives</h3>
+                    <div style="font-size: 0.88rem; color: var(--muted);">
+                        <div style="padding: 10px 0; border-bottom: 1px solid rgba(99,102,241,0.08);">
+                            <strong style="color: var(--text);">Objective 1:</strong> Develop AI detection framework
+                            <br><span style="color: #4ade80; font-size: 0.8rem;">&#x2192; Positivism enables objective measurement of framework performance</span>
+                        </div>
+                        <div style="padding: 10px 0; border-bottom: 1px solid rgba(99,102,241,0.08);">
+                            <strong style="color: var(--text);">Objective 2:</strong> Compare with existing methods
+                            <br><span style="color: #4ade80; font-size: 0.8rem;">&#x2192; Deductive approach structures hypothesis-driven comparison</span>
+                        </div>
+                        <div style="padding: 10px 0; border-bottom: 1px solid rgba(99,102,241,0.08);">
+                            <strong style="color: var(--text);">Objective 3:</strong> Validate in cloud environments
+                            <br><span style="color: #4ade80; font-size: 0.8rem;">&#x2192; Positivism demands empirical testing in realistic scenarios</span>
+                        </div>
+                        <div style="padding: 10px 0;">
+                            <strong style="color: var(--text);">Objective 4:</strong> Ensure explainability
+                            <br><span style="color: #4ade80; font-size: 0.8rem;">&#x2192; Measurable XAI metrics (fidelity, stability) align with positivist evaluation</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div>
+                <div class="card" style="margin-bottom: 20px; border-color: rgba(6,182,212,0.3);">
+                    <h3 style="color: #22d3ee;">&#x1F4C2; Supporting Data Collection</h3>
+                    <div style="font-size: 0.88rem; color: var(--muted);">
+                        <div style="padding: 8px 0; border-bottom: 1px solid rgba(99,102,241,0.08);">
+                            &#x2022; <strong style="color: var(--text);">Quantitative network traffic datasets</strong> (CICIDS, Unraveled, DARPA)
+                        </div>
+                        <div style="padding: 8px 0; border-bottom: 1px solid rgba(99,102,241,0.08);">
+                            &#x2022; <strong style="color: var(--text);">Structured numerical features</strong> extracted from cloud logs & flows
+                        </div>
+                        <div style="padding: 8px 0; border-bottom: 1px solid rgba(99,102,241,0.08);">
+                            &#x2022; <strong style="color: var(--text);">Controlled experimental conditions</strong> with train/validation/test splits
+                        </div>
+                        <div style="padding: 8px 0;">
+                            &#x2022; <strong style="color: var(--text);">Reproducible simulations</strong> using MITRE ATT&CK attack scenarios
+                        </div>
+                    </div>
+                </div>
+                <div class="card" style="border-color: rgba(139,92,246,0.3);">
+                    <h3 style="color: #a78bfa;">&#x1F4CA; Supporting Data Analysis</h3>
+                    <div style="font-size: 0.88rem; color: var(--muted);">
+                        <div style="padding: 8px 0; border-bottom: 1px solid rgba(99,102,241,0.08);">
+                            &#x2022; <strong style="color: var(--text);">Statistical hypothesis testing</strong> (t-tests, ANOVA, Wilcoxon)
+                        </div>
+                        <div style="padding: 8px 0; border-bottom: 1px solid rgba(99,102,241,0.08);">
+                            &#x2022; <strong style="color: var(--text);">Performance metrics</strong> — Accuracy, Precision, Recall, F1, AUC-ROC
+                        </div>
+                        <div style="padding: 8px 0; border-bottom: 1px solid rgba(99,102,241,0.08);">
+                            &#x2022; <strong style="color: var(--text);">Confusion matrices</strong> & ROC curves for visual validation
+                        </div>
+                        <div style="padding: 8px 0;">
+                            &#x2022; <strong style="color: var(--text);">Cross-validation</strong> (k-fold) ensuring robustness and generalizability
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="highlight-box" style="margin-top: 24px; text-align: center;">
+            <p style="color: var(--text); font-size: 1rem; margin: 0;">
+                <strong style="color: #22d3ee;">Conclusion:</strong> The combination of <strong>Positivism</strong> (philosophy) and <strong>Deductive Approach</strong> provides a rigorous, objective, and systematic framework perfectly suited to developing, testing, and validating an AI-based APT detection system through empirical experimentation and statistical analysis.
+            </p>
+        </div>
+    </div>
+    <div class="slide-number">05 / 05</div>
+</section>
+
+<script>
+    document.querySelectorAll('.nav-dot').forEach((dot, index) => {
+        dot.addEventListener('click', (e) => {
+            e.preventDefault();
+            document.getElementById(`slide${index + 1}`).scrollIntoView({ behavior: 'smooth' });
+        });
+    });
+    const slides = document.querySelectorAll('.slide');
+    const dots = document.querySelectorAll('.nav-dot');
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                const idx = Array.from(slides).indexOf(entry.target);
+                dots.forEach(d => d.classList.remove('active'));
+                dots[idx].classList.add('active');
+            }
+        });
+    }, { threshold: 0.5 });
+    slides.forEach(slide => observer.observe(slide));
+</script>
+</body>
+</html>
