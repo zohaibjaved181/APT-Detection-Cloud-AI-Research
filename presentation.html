@@ -1,0 +1,1043 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detection of APT in Cloud Networks Using AI</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500&display=swap');
+
+        :root {
+            --primary: #6366f1;
+            --primary-dark: #4f46e5;
+            --accent: #06b6d4;
+            --accent2: #8b5cf6;
+            --dark: #0f172a;
+            --darker: #020617;
+            --card-bg: rgba(15, 23, 42, 0.7);
+            --text: #e2e8f0;
+            --text-muted: #94a3b8;
+            --gradient1: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --gradient2: linear-gradient(135deg, #06b6d4 0%, #6366f1 100%);
+            --gradient3: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        }
+
+        html, body {
+            font-family: 'Inter', sans-serif;
+            background: var(--darker);
+            color: var(--text);
+            overflow-x: hidden;
+            scroll-behavior: smooth;
+        }
+
+        .slide {
+            min-height: 100vh;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            padding: 60px 80px;
+            overflow: hidden;
+        }
+
+        .slide::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: radial-gradient(ellipse at 20% 50%, rgba(99, 102, 241, 0.08) 0%, transparent 50%),
+                        radial-gradient(ellipse at 80% 20%, rgba(6, 182, 212, 0.06) 0%, transparent 50%),
+                        radial-gradient(ellipse at 50% 80%, rgba(139, 92, 246, 0.05) 0%, transparent 50%);
+            pointer-events: none;
+        }
+
+        .slide-number {
+            position: absolute;
+            bottom: 30px;
+            right: 40px;
+            font-size: 14px;
+            color: var(--text-muted);
+            font-weight: 500;
+            letter-spacing: 2px;
+        }
+
+        /* Animated background grid */
+        .grid-bg {
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-image:
+                linear-gradient(rgba(99, 102, 241, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(99, 102, 241, 0.03) 1px, transparent 1px);
+            background-size: 60px 60px;
+            animation: gridMove 20s linear infinite;
+        }
+
+        @keyframes gridMove {
+            0% { transform: translate(0, 0); }
+            100% { transform: translate(60px, 60px); }
+        }
+
+        /* Floating orbs */
+        .orb {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(60px);
+            opacity: 0.4;
+            animation: float 8s ease-in-out infinite;
+        }
+
+        .orb-1 { width: 300px; height: 300px; background: var(--primary); top: -100px; right: -50px; animation-delay: 0s; }
+        .orb-2 { width: 200px; height: 200px; background: var(--accent); bottom: -80px; left: -40px; animation-delay: -3s; }
+        .orb-3 { width: 250px; height: 250px; background: var(--accent2); top: 50%; left: 60%; animation-delay: -5s; }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0) scale(1); }
+            50% { transform: translateY(-30px) scale(1.05); }
+        }
+
+        /* Typography */
+        h1 { font-size: 3.5rem; font-weight: 800; line-height: 1.1; margin-bottom: 20px; }
+        h2 { font-size: 2.5rem; font-weight: 700; margin-bottom: 30px; }
+        h3 { font-size: 1.4rem; font-weight: 600; margin-bottom: 15px; }
+        p { font-size: 1.1rem; line-height: 1.7; color: var(--text-muted); }
+
+        .gradient-text {
+            background: var(--gradient2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .subtitle {
+            font-size: 1.3rem;
+            color: var(--text-muted);
+            font-weight: 300;
+            margin-top: 15px;
+        }
+
+        /* Cards */
+        .card {
+            background: var(--card-bg);
+            border: 1px solid rgba(99, 102, 241, 0.15);
+            border-radius: 16px;
+            padding: 28px;
+            backdrop-filter: blur(20px);
+            transition: all 0.3s ease;
+        }
+
+        .card:hover {
+            border-color: rgba(99, 102, 241, 0.4);
+            transform: translateY(-4px);
+            box-shadow: 0 20px 60px rgba(99, 102, 241, 0.1);
+        }
+
+        /* Grid layouts */
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+        .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; }
+        .grid-4 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+
+        /* Tags and badges */
+        .tag {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-right: 8px;
+            margin-bottom: 8px;
+        }
+
+        .tag-primary { background: rgba(99, 102, 241, 0.15); color: #818cf8; border: 1px solid rgba(99, 102, 241, 0.3); }
+        .tag-accent { background: rgba(6, 182, 212, 0.15); color: #22d3ee; border: 1px solid rgba(6, 182, 212, 0.3); }
+        .tag-purple { background: rgba(139, 92, 246, 0.15); color: #a78bfa; border: 1px solid rgba(139, 92, 246, 0.3); }
+        .tag-red { background: rgba(239, 68, 68, 0.15); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.3); }
+        .tag-green { background: rgba(34, 197, 94, 0.15); color: #4ade80; border: 1px solid rgba(34, 197, 94, 0.3); }
+
+        /* Icon boxes */
+        .icon-box {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.4rem;
+            margin-bottom: 16px;
+        }
+
+        .icon-box-primary { background: rgba(99, 102, 241, 0.15); }
+        .icon-box-accent { background: rgba(6, 182, 212, 0.15); }
+        .icon-box-purple { background: rgba(139, 92, 246, 0.15); }
+        .icon-box-red { background: rgba(239, 68, 68, 0.15); }
+
+        /* Timeline */
+        .timeline {
+            position: relative;
+            padding-left: 40px;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 15px;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: linear-gradient(180deg, var(--primary), var(--accent), var(--accent2));
+        }
+
+        .timeline-item {
+            position: relative;
+            margin-bottom: 24px;
+            padding: 16px 20px;
+            background: var(--card-bg);
+            border-radius: 12px;
+            border: 1px solid rgba(99, 102, 241, 0.1);
+        }
+
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -33px;
+            top: 22px;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: var(--primary);
+            border: 3px solid var(--darker);
+        }
+
+        /* Stat boxes */
+        .stat {
+            text-align: center;
+            padding: 20px;
+        }
+
+        .stat-value {
+            font-size: 2.5rem;
+            font-weight: 800;
+            background: var(--gradient2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .stat-label {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin-top: 5px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* Progress bars */
+        .progress-bar {
+            height: 8px;
+            background: rgba(99, 102, 241, 0.1);
+            border-radius: 4px;
+            overflow: hidden;
+            margin-top: 8px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            border-radius: 4px;
+            background: var(--gradient2);
+        }
+
+        /* Content wrapper */
+        .content {
+            position: relative;
+            z-index: 2;
+            width: 100%;
+            max-width: 1200px;
+        }
+
+        /* Reference list */
+        .ref-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .ref-list li {
+            padding: 12px 16px;
+            margin-bottom: 10px;
+            background: var(--card-bg);
+            border-radius: 10px;
+            border-left: 3px solid var(--primary);
+            font-size: 0.9rem;
+            line-height: 1.5;
+        }
+
+        .ref-list li a {
+            color: var(--accent);
+            text-decoration: none;
+            word-break: break-all;
+        }
+
+        .ref-list li a:hover { text-decoration: underline; }
+
+        /* Diagram styles */
+        .flow-diagram {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin: 20px 0;
+        }
+
+        .flow-node {
+            padding: 10px 18px;
+            border-radius: 10px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            text-align: center;
+            min-width: 120px;
+        }
+
+        .flow-arrow {
+            font-size: 1.2rem;
+            color: var(--text-muted);
+        }
+
+        /* Pulse animation */
+        .pulse {
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.6; }
+        }
+
+        /* Gap item styling */
+        .gap-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .gap-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            font-size: 0.9rem;
+        }
+
+        /* Navigation dots */
+        .nav-dots {
+            position: fixed;
+            right: 30px;
+            top: 50%;
+            transform: translateY(-50%);
+            z-index: 100;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .nav-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: rgba(99, 102, 241, 0.3);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .nav-dot:hover, .nav-dot.active {
+            background: var(--primary);
+            transform: scale(1.3);
+        }
+
+        /* Comparison table */
+        .comparison-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            border-radius: 12px;
+            overflow: hidden;
+            margin-top: 20px;
+        }
+
+        .comparison-table th {
+            background: rgba(99, 102, 241, 0.15);
+            padding: 14px 18px;
+            text-align: left;
+            font-weight: 600;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #818cf8;
+        }
+
+        .comparison-table td {
+            padding: 12px 18px;
+            border-bottom: 1px solid rgba(99, 102, 241, 0.08);
+            font-size: 0.9rem;
+            color: var(--text-muted);
+        }
+
+        .comparison-table tr:hover td {
+            background: rgba(99, 102, 241, 0.03);
+        }
+    </style>
+</head>
+<body>
+
+<!-- Navigation Dots -->
+<div class="nav-dots">
+    <a class="nav-dot active" href="#slide1"></a>
+    <a class="nav-dot" href="#slide2"></a>
+    <a class="nav-dot" href="#slide3"></a>
+    <a class="nav-dot" href="#slide4"></a>
+    <a class="nav-dot" href="#slide5"></a>
+    <a class="nav-dot" href="#slide6"></a>
+    <a class="nav-dot" href="#slide7"></a>
+    <a class="nav-dot" href="#slide8"></a>
+    <a class="nav-dot" href="#slide9"></a>
+    <a class="nav-dot" href="#slide10"></a>
+</div>
+
+<!-- SLIDE 1: Title Slide -->
+<section class="slide" id="slide1">
+    <div class="grid-bg"></div>
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+    <div class="orb orb-3"></div>
+    <div class="content" style="text-align: center;">
+        <div style="margin-bottom: 30px;">
+            <span class="tag tag-primary">Research Presentation</span>
+            <span class="tag tag-accent">2024-2025</span>
+        </div>
+        <h1 style="font-size: 3.2rem; max-width: 900px; margin: 0 auto;">
+            Detection of <span class="gradient-text">Advanced Persistent Threats</span> in Cloud Networks Using <span class="gradient-text">Artificial Intelligence</span>
+        </h1>
+        <p class="subtitle" style="max-width: 700px; margin: 25px auto 0;">
+            A comprehensive research study exploring AI-driven methodologies for identifying and mitigating sophisticated cyber threats in cloud computing environments
+        </p>
+        <div style="margin-top: 50px; display: flex; justify-content: center; gap: 40px;">
+            <div class="stat">
+                <div class="stat-value">71%</div>
+                <div class="stat-label">Organizations Hit by APTs</div>
+            </div>
+            <div class="stat">
+                <div class="stat-value">197</div>
+                <div class="stat-label">Avg. Days to Detect</div>
+            </div>
+            <div class="stat">
+                <div class="stat-value">$4.9M</div>
+                <div class="stat-label">Avg. Breach Cost</div>
+            </div>
+        </div>
+    </div>
+    <div class="slide-number">01 / 10</div>
+</section>
+
+
+<!-- SLIDE 2: Introduction to APTs -->
+<section class="slide" id="slide2">
+    <div class="grid-bg"></div>
+    <div class="orb orb-2" style="top: 20%; right: 10%;"></div>
+    <div class="content">
+        <span class="tag tag-red">Threat Landscape</span>
+        <h2>What Are <span class="gradient-text">Advanced Persistent Threats?</span></h2>
+        <div class="grid-2">
+            <div>
+                <p style="margin-bottom: 25px;">APTs are prolonged, targeted cyberattacks where adversaries gain unauthorized network access and remain undetected for extended periods. They target high-value assets through sophisticated multi-stage campaigns.</p>
+                <div class="card" style="margin-bottom: 16px;">
+                    <h3 style="color: #f87171;">Key Characteristics</h3>
+                    <div style="display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px;">
+                        <span class="tag tag-red">Stealthy</span>
+                        <span class="tag tag-primary">Persistent</span>
+                        <span class="tag tag-accent">Targeted</span>
+                        <span class="tag tag-purple">Multi-Stage</span>
+                        <span class="tag tag-green">Adaptive</span>
+                    </div>
+                </div>
+                <div class="card">
+                    <h3 style="color: #818cf8;">Notable APT Groups</h3>
+                    <p style="font-size: 0.9rem;">APT28 (Fancy Bear), APT29 (Cozy Bear), Lazarus Group, APT41, Equation Group — state-sponsored actors with advanced capabilities</p>
+                </div>
+            </div>
+            <div>
+                <div class="card" style="margin-bottom: 16px;">
+                    <div class="icon-box icon-box-red">&#x26A0;</div>
+                    <h3>Why Traditional Defenses Fail</h3>
+                    <ul style="list-style: none; padding: 0; color: var(--text-muted); font-size: 0.95rem;">
+                        <li style="padding: 8px 0; border-bottom: 1px solid rgba(99,102,241,0.08);">&#x2717; Signature-based IDS cannot detect zero-day exploits</li>
+                        <li style="padding: 8px 0; border-bottom: 1px solid rgba(99,102,241,0.08);">&#x2717; Firewall rules bypass via encrypted channels</li>
+                        <li style="padding: 8px 0; border-bottom: 1px solid rgba(99,102,241,0.08);">&#x2717; Low-and-slow tactics evade threshold alerts</li>
+                        <li style="padding: 8px 0; border-bottom: 1px solid rgba(99,102,241,0.08);">&#x2717; Lateral movement mimics legitimate traffic</li>
+                        <li style="padding: 8px 0;">&#x2717; Polymorphic malware evades static analysis</li>
+                    </ul>
+                </div>
+                <div class="card" style="background: rgba(239, 68, 68, 0.05); border-color: rgba(239, 68, 68, 0.2);">
+                    <div style="display: flex; align-items: center; gap: 10px;">
+                        <span style="font-size: 1.5rem;">&#x1F4CA;</span>
+                        <div>
+                            <div style="font-weight: 700; font-size: 1.1rem; color: #f87171;">+150% Increase</div>
+                            <div style="font-size: 0.8rem; color: var(--text-muted);">In APT attacks on cloud infrastructure (2022-2024)</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="slide-number">02 / 10</div>
+</section>
+
+
+<!-- SLIDE 3: APT Attack Lifecycle -->
+<section class="slide" id="slide3">
+    <div class="grid-bg"></div>
+    <div class="orb orb-1" style="bottom: 10%; left: 5%;"></div>
+    <div class="content">
+        <span class="tag tag-purple">Kill Chain Model</span>
+        <h2>APT <span class="gradient-text">Attack Lifecycle</span></h2>
+        <p style="max-width: 700px; margin-bottom: 30px;">Based on Lockheed Martin Cyber Kill Chain and MITRE ATT&CK Framework — APTs follow a systematic multi-phase approach</p>
+
+        <div class="flow-diagram" style="margin-bottom: 30px;">
+            <div class="flow-node" style="background: rgba(239,68,68,0.15); color: #f87171;">&#x1F50D; Reconnaissance</div>
+            <span class="flow-arrow">&#x27A1;</span>
+            <div class="flow-node" style="background: rgba(251,146,60,0.15); color: #fb923c;">&#x2699; Weaponization</div>
+            <span class="flow-arrow">&#x27A1;</span>
+            <div class="flow-node" style="background: rgba(250,204,21,0.15); color: #facc15;">&#x1F4E7; Delivery</div>
+            <span class="flow-arrow">&#x27A1;</span>
+            <div class="flow-node" style="background: rgba(34,197,94,0.15); color: #4ade80;">&#x1F4A5; Exploitation</div>
+            <span class="flow-arrow">&#x27A1;</span>
+            <div class="flow-node" style="background: rgba(6,182,212,0.15); color: #22d3ee;">&#x1F4E6; Installation</div>
+            <span class="flow-arrow">&#x27A1;</span>
+            <div class="flow-node" style="background: rgba(99,102,241,0.15); color: #818cf8;">&#x1F3AE; C2</div>
+            <span class="flow-arrow">&#x27A1;</span>
+            <div class="flow-node" style="background: rgba(139,92,246,0.15); color: #a78bfa;">&#x1F4E4; Exfiltration</div>
+        </div>
+
+        <div class="grid-3">
+            <div class="card">
+                <div class="icon-box icon-box-red">&#x1F3AF;</div>
+                <h3>Initial Access</h3>
+                <p style="font-size: 0.85rem;">Spear phishing, supply chain compromise, zero-day exploits targeting cloud APIs and misconfigured services</p>
+            </div>
+            <div class="card">
+                <div class="icon-box icon-box-primary">&#x1F50C;</div>
+                <h3>Persistence & Lateral Movement</h3>
+                <p style="font-size: 0.85rem;">Privilege escalation, credential harvesting, moving across cloud workloads and containers undetected</p>
+            </div>
+            <div class="card">
+                <div class="icon-box icon-box-purple">&#x1F4E1;</div>
+                <h3>Command & Control + Exfiltration</h3>
+                <p style="font-size: 0.85rem;">Encrypted C2 channels via legitimate cloud services (DNS tunneling, HTTPS beaconing), slow data exfiltration</p>
+            </div>
+        </div>
+    </div>
+    <div class="slide-number">03 / 10</div>
+</section>
+
+
+<!-- SLIDE 4: Cloud-Specific Threat Landscape -->
+<section class="slide" id="slide4">
+    <div class="grid-bg"></div>
+    <div class="orb orb-3" style="top: 10%; left: 20%;"></div>
+    <div class="content">
+        <span class="tag tag-accent">Cloud Security</span>
+        <h2>Cloud-Specific <span class="gradient-text">Threat Vectors</span></h2>
+        <p style="max-width: 700px; margin-bottom: 30px;">Cloud environments introduce unique attack surfaces that APT actors actively exploit</p>
+
+        <div class="grid-2">
+            <div>
+                <div class="card" style="margin-bottom: 16px;">
+                    <h3 style="color: #22d3ee;">&#x2601; Cloud Attack Surfaces</h3>
+                    <div class="timeline" style="margin-top: 16px;">
+                        <div class="timeline-item">
+                            <strong style="color: var(--text);">API Exploitation</strong>
+                            <p style="font-size: 0.8rem; margin-top: 4px;">Misconfigured REST APIs, exposed credentials in metadata services</p>
+                        </div>
+                        <div class="timeline-item">
+                            <strong style="color: var(--text);">Container Escape</strong>
+                            <p style="font-size: 0.8rem; margin-top: 4px;">Kubernetes vulnerabilities, Docker breakout to host system</p>
+                        </div>
+                        <div class="timeline-item">
+                            <strong style="color: var(--text);">Identity Compromise</strong>
+                            <p style="font-size: 0.8rem; margin-top: 4px;">IAM role abuse, OAuth token theft, federation attacks</p>
+                        </div>
+                        <div class="timeline-item">
+                            <strong style="color: var(--text);">Serverless Injection</strong>
+                            <p style="font-size: 0.8rem; margin-top: 4px;">Lambda/Function poisoning, event-driven trigger manipulation</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div>
+                <div class="card" style="margin-bottom: 16px;">
+                    <h3 style="color: #a78bfa;">&#x1F6E1; Detection Challenges in Cloud</h3>
+                    <ul style="list-style: none; padding: 0; color: var(--text-muted); font-size: 0.9rem;">
+                        <li style="padding: 10px 0; border-bottom: 1px solid rgba(99,102,241,0.08); display: flex; gap: 10px;">
+                            <span style="color: #f87171;">&#x25CF;</span>
+                            <span>Multi-tenancy obscures attack attribution</span>
+                        </li>
+                        <li style="padding: 10px 0; border-bottom: 1px solid rgba(99,102,241,0.08); display: flex; gap: 10px;">
+                            <span style="color: #fb923c;">&#x25CF;</span>
+                            <span>Ephemeral workloads destroy forensic evidence</span>
+                        </li>
+                        <li style="padding: 10px 0; border-bottom: 1px solid rgba(99,102,241,0.08); display: flex; gap: 10px;">
+                            <span style="color: #facc15;">&#x25CF;</span>
+                            <span>Encrypted east-west traffic limits visibility</span>
+                        </li>
+                        <li style="padding: 10px 0; border-bottom: 1px solid rgba(99,102,241,0.08); display: flex; gap: 10px;">
+                            <span style="color: #4ade80;">&#x25CF;</span>
+                            <span>Dynamic scaling creates baseline drift</span>
+                        </li>
+                        <li style="padding: 10px 0; display: flex; gap: 10px;">
+                            <span style="color: #818cf8;">&#x25CF;</span>
+                            <span>Shared responsibility model creates gaps</span>
+                        </li>
+                    </ul>
+                </div>
+                <div class="card" style="background: rgba(6, 182, 212, 0.05); border-color: rgba(6, 182, 212, 0.2);">
+                    <div style="font-weight: 700; color: #22d3ee; margin-bottom: 8px;">Cloud APT Statistics</div>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+                        <div><div style="font-size: 1.5rem; font-weight: 800; color: var(--text);">82%</div><div style="font-size: 0.75rem; color: var(--text-muted);">Breaches involve cloud assets</div></div>
+                        <div><div style="font-size: 1.5rem; font-weight: 800; color: var(--text);">45%</div><div style="font-size: 0.75rem; color: var(--text-muted);">Cloud-native attacks</div></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="slide-number">04 / 10</div>
+</section>
+
+
+<!-- SLIDE 5: AI/ML Techniques for Detection -->
+<section class="slide" id="slide5">
+    <div class="grid-bg"></div>
+    <div class="orb orb-1" style="top: 40%; left: -5%;"></div>
+    <div class="content">
+        <span class="tag tag-green">Methodology</span>
+        <h2>AI/ML Techniques for <span class="gradient-text">APT Detection</span></h2>
+        <p style="max-width: 700px; margin-bottom: 30px;">Machine Learning and Deep Learning approaches offer promising solutions for detecting sophisticated and evasive APT behaviors</p>
+
+        <div class="grid-3">
+            <div class="card">
+                <div class="icon-box icon-box-primary">&#x1F916;</div>
+                <h3>Supervised Learning</h3>
+                <p style="font-size: 0.85rem; margin-bottom: 12px;">Classification of known attack patterns from labeled datasets</p>
+                <div style="font-size: 0.8rem;">
+                    <div style="display: flex; justify-content: space-between; color: var(--text-muted);"><span>Random Forest</span><span>96.2%</span></div>
+                    <div class="progress-bar"><div class="progress-fill" style="width: 96.2%;"></div></div>
+                    <div style="display: flex; justify-content: space-between; color: var(--text-muted); margin-top: 8px;"><span>XGBoost</span><span>97.1%</span></div>
+                    <div class="progress-bar"><div class="progress-fill" style="width: 97.1%;"></div></div>
+                    <div style="display: flex; justify-content: space-between; color: var(--text-muted); margin-top: 8px;"><span>SVM</span><span>93.8%</span></div>
+                    <div class="progress-bar"><div class="progress-fill" style="width: 93.8%;"></div></div>
+                </div>
+            </div>
+            <div class="card">
+                <div class="icon-box icon-box-accent">&#x1F52C;</div>
+                <h3>Unsupervised Learning</h3>
+                <p style="font-size: 0.85rem; margin-bottom: 12px;">Anomaly detection without labeled APT samples</p>
+                <div style="font-size: 0.8rem;">
+                    <div style="display: flex; justify-content: space-between; color: var(--text-muted);"><span>Isolation Forest</span><span>91.5%</span></div>
+                    <div class="progress-bar"><div class="progress-fill" style="width: 91.5%; background: linear-gradient(90deg, #06b6d4, #22d3ee);"></div></div>
+                    <div style="display: flex; justify-content: space-between; color: var(--text-muted); margin-top: 8px;"><span>Autoencoders</span><span>94.3%</span></div>
+                    <div class="progress-bar"><div class="progress-fill" style="width: 94.3%; background: linear-gradient(90deg, #06b6d4, #22d3ee);"></div></div>
+                    <div style="display: flex; justify-content: space-between; color: var(--text-muted); margin-top: 8px;"><span>DBSCAN</span><span>88.7%</span></div>
+                    <div class="progress-bar"><div class="progress-fill" style="width: 88.7%; background: linear-gradient(90deg, #06b6d4, #22d3ee);"></div></div>
+                </div>
+            </div>
+            <div class="card">
+                <div class="icon-box icon-box-purple">&#x1F9E0;</div>
+                <h3>Reinforcement Learning</h3>
+                <p style="font-size: 0.85rem; margin-bottom: 12px;">Adaptive defense through continuous learning</p>
+                <div style="font-size: 0.8rem;">
+                    <div style="display: flex; justify-content: space-between; color: var(--text-muted);"><span>DQN Agent</span><span>89.4%</span></div>
+                    <div class="progress-bar"><div class="progress-fill" style="width: 89.4%; background: linear-gradient(90deg, #8b5cf6, #a78bfa);"></div></div>
+                    <div style="display: flex; justify-content: space-between; color: var(--text-muted); margin-top: 8px;"><span>Policy Gradient</span><span>91.2%</span></div>
+                    <div class="progress-bar"><div class="progress-fill" style="width: 91.2%; background: linear-gradient(90deg, #8b5cf6, #a78bfa);"></div></div>
+                    <div style="display: flex; justify-content: space-between; color: var(--text-muted); margin-top: 8px;"><span>Multi-Agent RL</span><span>93.6%</span></div>
+                    <div class="progress-bar"><div class="progress-fill" style="width: 93.6%; background: linear-gradient(90deg, #8b5cf6, #a78bfa);"></div></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card" style="margin-top: 24px; text-align: center;">
+            <div class="flow-diagram">
+                <div class="flow-node" style="background: rgba(99,102,241,0.15); color: #818cf8;">Network Logs</div>
+                <span class="flow-arrow">&#x27A1;</span>
+                <div class="flow-node" style="background: rgba(6,182,212,0.15); color: #22d3ee;">Feature Extraction</div>
+                <span class="flow-arrow">&#x27A1;</span>
+                <div class="flow-node" style="background: rgba(139,92,246,0.15); color: #a78bfa;">AI/ML Model</div>
+                <span class="flow-arrow">&#x27A1;</span>
+                <div class="flow-node" style="background: rgba(34,197,94,0.15); color: #4ade80;">Threat Classification</div>
+                <span class="flow-arrow">&#x27A1;</span>
+                <div class="flow-node" style="background: rgba(239,68,68,0.15); color: #f87171;">Alert & Response</div>
+            </div>
+        </div>
+    </div>
+    <div class="slide-number">05 / 10</div>
+</section>
+
+
+<!-- SLIDE 6: Deep Learning Approaches -->
+<section class="slide" id="slide6">
+    <div class="grid-bg"></div>
+    <div class="orb orb-2" style="top: 60%; right: 5%;"></div>
+    <div class="content">
+        <span class="tag tag-primary">Deep Learning</span>
+        <h2>Advanced Deep Learning <span class="gradient-text">Architectures</span></h2>
+        <p style="max-width: 700px; margin-bottom: 30px;">State-of-the-art neural network architectures specifically designed or adapted for APT detection in cloud environments</p>
+
+        <div class="grid-2">
+            <div class="card" style="margin-bottom: 16px;">
+                <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 16px;">
+                    <div class="icon-box icon-box-primary" style="margin-bottom: 0;">&#x1F4CA;</div>
+                    <h3 style="margin-bottom: 0;">CNN + LSTM Hybrid</h3>
+                </div>
+                <p style="font-size: 0.85rem; margin-bottom: 12px;">Convolutional layers extract spatial features from network flow matrices while LSTM captures temporal attack sequences</p>
+                <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                    <span class="tag tag-primary">Spatial Features</span>
+                    <span class="tag tag-accent">Temporal Patterns</span>
+                    <span class="tag tag-green">98.3% Accuracy</span>
+                </div>
+            </div>
+            <div class="card" style="margin-bottom: 16px;">
+                <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 16px;">
+                    <div class="icon-box icon-box-accent" style="margin-bottom: 0;">&#x1F578;</div>
+                    <h3 style="margin-bottom: 0;">Graph Neural Networks</h3>
+                </div>
+                <p style="font-size: 0.85rem; margin-bottom: 12px;">Model cloud network topology as graphs; detect anomalous lateral movement and suspicious communication patterns</p>
+                <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                    <span class="tag tag-accent">Topology-Aware</span>
+                    <span class="tag tag-purple">Relationship Mining</span>
+                    <span class="tag tag-green">96.7% Accuracy</span>
+                </div>
+            </div>
+            <div class="card" style="margin-bottom: 16px;">
+                <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 16px;">
+                    <div class="icon-box icon-box-purple" style="margin-bottom: 0;">&#x1F504;</div>
+                    <h3 style="margin-bottom: 0;">Transformer Models (LLM-based)</h3>
+                </div>
+                <p style="font-size: 0.85rem; margin-bottom: 12px;">Attention mechanisms for long-range dependency modeling in system call sequences and log analysis (APT-LLM)</p>
+                <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                    <span class="tag tag-purple">Self-Attention</span>
+                    <span class="tag tag-primary">Log Analysis</span>
+                    <span class="tag tag-green">97.8% Accuracy</span>
+                </div>
+            </div>
+            <div class="card" style="margin-bottom: 16px;">
+                <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 16px;">
+                    <div class="icon-box icon-box-red" style="margin-bottom: 0;">&#x1F300;</div>
+                    <h3 style="margin-bottom: 0;">Generative Adversarial Networks</h3>
+                </div>
+                <p style="font-size: 0.85rem; margin-bottom: 12px;">GANs generate synthetic APT traffic for training data augmentation; Discriminator serves as anomaly detector</p>
+                <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                    <span class="tag tag-red">Data Augmentation</span>
+                    <span class="tag tag-accent">Anomaly Detection</span>
+                    <span class="tag tag-green">95.2% Accuracy</span>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="slide-number">06 / 10</div>
+</section>
+
+
+<!-- SLIDE 7: Literature Review -->
+<section class="slide" id="slide7">
+    <div class="grid-bg"></div>
+    <div class="orb orb-1" style="bottom: 20%; left: 15%;"></div>
+    <div class="content">
+        <span class="tag tag-accent">Literature Review</span>
+        <h2>Key Research <span class="gradient-text">Contributions</span></h2>
+        <p style="max-width: 700px; margin-bottom: 25px;">Comprehensive review of state-of-the-art approaches in AI-based APT detection for cloud environments</p>
+
+        <table class="comparison-table">
+            <thead>
+                <tr>
+                    <th>Study / Year</th>
+                    <th>Technique</th>
+                    <th>Focus Area</th>
+                    <th>Key Finding</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td style="color: var(--text); font-weight: 500;">CMU SEI Report (2024)</td>
+                    <td>AI/ML Survey</td>
+                    <td>APT Defense Feasibility</td>
+                    <td>Layered AI approach recommended</td>
+                </tr>
+                <tr>
+                    <td style="color: var(--text); font-weight: 500;">APT-LLM (2025)</td>
+                    <td>Large Language Models</td>
+                    <td>Anomaly Detection</td>
+                    <td>LLM embeddings outperform traditional methods</td>
+                </tr>
+                <tr>
+                    <td style="color: var(--text); font-weight: 500;">RAPID (2024)</td>
+                    <td>Context-Aware DL</td>
+                    <td>Self-supervised Detection</td>
+                    <td>Adapts to dynamic system behavior</td>
+                </tr>
+                <tr>
+                    <td style="color: var(--text); font-weight: 500;">Nature (2024)</td>
+                    <td>Advanced Computing</td>
+                    <td>Network Traffic Profiling</td>
+                    <td>Behavioral APT profiles in traffic</td>
+                </tr>
+                <tr>
+                    <td style="color: var(--text); font-weight: 500;">DeepTaskAPT (2021)</td>
+                    <td>LSTM</td>
+                    <td>Insider Threat</td>
+                    <td>Task-tree sequence modeling</td>
+                </tr>
+                <tr>
+                    <td style="color: var(--text); font-weight: 500;">Hybrid Ensemble (2025)</td>
+                    <td>Ensemble ML</td>
+                    <td>Network APT Detection</td>
+                    <td>Optimized hybrid classifiers</td>
+                </tr>
+                <tr>
+                    <td style="color: var(--text); font-weight: 500;">Cloud-Edge Synergy (2026)</td>
+                    <td>Graph Transformer</td>
+                    <td>Collaborative Detection</td>
+                    <td>Distributed cloud-edge framework</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div style="margin-top: 20px; display: flex; gap: 16px;">
+            <div class="card" style="flex: 1; text-align: center;">
+                <div class="stat-value" style="font-size: 1.8rem;">34+</div>
+                <div class="stat-label">IDS Models for Cloud</div>
+            </div>
+            <div class="card" style="flex: 1; text-align: center;">
+                <div class="stat-value" style="font-size: 1.8rem;">95%+</div>
+                <div class="stat-label">Accuracy (Hybrid Methods)</div>
+            </div>
+            <div class="card" style="flex: 1; text-align: center;">
+                <div class="stat-value" style="font-size: 1.8rem;">2020-2026</div>
+                <div class="stat-label">Research Timeline</div>
+            </div>
+        </div>
+    </div>
+    <div class="slide-number">07 / 10</div>
+</section>
+
+
+<!-- SLIDE 8: Research Gaps -->
+<section class="slide" id="slide8">
+    <div class="grid-bg"></div>
+    <div class="orb orb-3" style="top: 30%; right: 20%;"></div>
+    <div class="content">
+        <span class="tag tag-red">Critical Analysis</span>
+        <h2>Identified <span class="gradient-text">Research Gaps</span></h2>
+        <p style="max-width: 700px; margin-bottom: 30px;">Key limitations and unaddressed challenges in existing literature that form the basis for our proposed research</p>
+
+        <div class="grid-2">
+            <div>
+                <div class="gap-item">
+                    <div class="gap-icon" style="background: rgba(239,68,68,0.15); color: #f87171;">1</div>
+                    <div>
+                        <strong style="color: var(--text);">Lack of Cloud-Native APT Datasets</strong>
+                        <p style="font-size: 0.82rem; margin-top: 4px;">Most studies use generic IDS datasets (NSL-KDD, CICIDS) that don't reflect cloud-specific attack patterns like API abuse and container escape</p>
+                    </div>
+                </div>
+                <div class="gap-item">
+                    <div class="gap-icon" style="background: rgba(251,146,60,0.15); color: #fb923c;">2</div>
+                    <div>
+                        <strong style="color: var(--text);">Limited Real-Time Processing</strong>
+                        <p style="font-size: 0.82rem; margin-top: 4px;">Deep learning models have high inference latency, making real-time detection in high-throughput cloud environments challenging</p>
+                    </div>
+                </div>
+                <div class="gap-item">
+                    <div class="gap-icon" style="background: rgba(250,204,21,0.15); color: #facc15;">3</div>
+                    <div>
+                        <strong style="color: var(--text);">Explainability Deficit (XAI)</strong>
+                        <p style="font-size: 0.82rem; margin-top: 4px;">Black-box AI models lack interpretability for SOC analysts; need for explainable threat attribution</p>
+                    </div>
+                </div>
+                <div class="gap-item">
+                    <div class="gap-icon" style="background: rgba(34,197,94,0.15); color: #4ade80;">4</div>
+                    <div>
+                        <strong style="color: var(--text);">Multi-Cloud & Hybrid Environments</strong>
+                        <p style="font-size: 0.82rem; margin-top: 4px;">Few studies address APT detection across multi-cloud (AWS + Azure + GCP) or hybrid cloud-edge architectures</p>
+                    </div>
+                </div>
+            </div>
+            <div>
+                <div class="gap-item">
+                    <div class="gap-icon" style="background: rgba(6,182,212,0.15); color: #22d3ee;">5</div>
+                    <div>
+                        <strong style="color: var(--text);">Adversarial Robustness</strong>
+                        <p style="font-size: 0.82rem; margin-top: 4px;">ML models vulnerable to adversarial evasion; APT actors can craft traffic to fool detectors</p>
+                    </div>
+                </div>
+                <div class="gap-item">
+                    <div class="gap-icon" style="background: rgba(99,102,241,0.15); color: #818cf8;">6</div>
+                    <div>
+                        <strong style="color: var(--text);">Cross-Stage Correlation</strong>
+                        <p style="font-size: 0.82rem; margin-top: 4px;">Limited work on correlating alerts across multiple kill chain stages for holistic APT campaign detection</p>
+                    </div>
+                </div>
+                <div class="gap-item">
+                    <div class="gap-icon" style="background: rgba(139,92,246,0.15); color: #a78bfa;">7</div>
+                    <div>
+                        <strong style="color: var(--text);">Federated & Privacy-Preserving Detection</strong>
+                        <p style="font-size: 0.82rem; margin-top: 4px;">Collaborative threat intelligence without sharing sensitive cloud tenant data remains unsolved</p>
+                    </div>
+                </div>
+                <div class="gap-item">
+                    <div class="gap-icon" style="background: rgba(236,72,153,0.15); color: #f472b6;">8</div>
+                    <div>
+                        <strong style="color: var(--text);">Concept Drift Handling</strong>
+                        <p style="font-size: 0.82rem; margin-top: 4px;">APT tactics evolve rapidly; models degrade over time without continuous adaptation mechanisms</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card" style="margin-top: 20px; border-color: rgba(239,68,68,0.3); background: rgba(239,68,68,0.03);">
+            <p style="text-align: center; font-size: 0.95rem; color: var(--text);"><strong>Primary Research Opportunity:</strong> Developing an explainable, real-time, cloud-native AI framework that correlates multi-stage APT behaviors across distributed cloud environments while maintaining adversarial robustness.</p>
+        </div>
+    </div>
+    <div class="slide-number">08 / 10</div>
+</section>
+
+
+<!-- SLIDE 9: Proposed Research Direction -->
+<section class="slide" id="slide9">
+    <div class="grid-bg"></div>
+    <div class="orb orb-2" style="top: 15%; left: 60%;"></div>
+    <div class="content">
+        <span class="tag tag-green">Our Contribution</span>
+        <h2>Proposed <span class="gradient-text">Research Direction</span></h2>
+        <p style="max-width: 700px; margin-bottom: 30px;">A novel AI-driven framework addressing identified gaps for next-generation APT detection in cloud networks</p>
+
+        <div class="grid-2">
+            <div>
+                <div class="card" style="margin-bottom: 16px; border-color: rgba(34,197,94,0.3);">
+                    <h3 style="color: #4ade80;">&#x1F3AF; Research Objectives</h3>
+                    <ul style="list-style: none; padding: 0; font-size: 0.9rem; color: var(--text-muted);">
+                        <li style="padding: 8px 0; border-bottom: 1px solid rgba(99,102,241,0.08);">&#x2713; Design cloud-native AI architecture for real-time APT detection</li>
+                        <li style="padding: 8px 0; border-bottom: 1px solid rgba(99,102,241,0.08);">&#x2713; Implement explainable multi-stage threat correlation</li>
+                        <li style="padding: 8px 0; border-bottom: 1px solid rgba(99,102,241,0.08);">&#x2713; Address adversarial robustness against evasion</li>
+                        <li style="padding: 8px 0; border-bottom: 1px solid rgba(99,102,241,0.08);">&#x2713; Enable federated learning for privacy-preserving detection</li>
+                        <li style="padding: 8px 0;">&#x2713; Evaluate on realistic cloud APT scenarios</li>
+                    </ul>
+                </div>
+                <div class="card">
+                    <h3 style="color: #818cf8;">&#x1F4D0; Methodology</h3>
+                    <div style="font-size: 0.85rem; color: var(--text-muted);">
+                        <p><strong style="color: var(--text);">Phase 1:</strong> Cloud APT dataset generation using MITRE ATT&CK simulation</p>
+                        <p style="margin-top: 8px;"><strong style="color: var(--text);">Phase 2:</strong> Hybrid GNN + Transformer model development</p>
+                        <p style="margin-top: 8px;"><strong style="color: var(--text);">Phase 3:</strong> XAI integration with SHAP/LIME explanations</p>
+                        <p style="margin-top: 8px;"><strong style="color: var(--text);">Phase 4:</strong> Federated deployment across multi-cloud testbed</p>
+                    </div>
+                </div>
+            </div>
+            <div>
+                <div class="card" style="margin-bottom: 16px;">
+                    <h3 style="color: #22d3ee;">&#x1F52E; Expected Contributions</h3>
+                    <div style="font-size: 0.85rem; color: var(--text-muted);">
+                        <div style="padding: 10px 0; border-bottom: 1px solid rgba(99,102,241,0.08);">
+                            <strong style="color: var(--text);">Novel Framework:</strong> Cloud-native, explainable APT detection system
+                        </div>
+                        <div style="padding: 10px 0; border-bottom: 1px solid rgba(99,102,241,0.08);">
+                            <strong style="color: var(--text);">New Dataset:</strong> Realistic cloud APT attack dataset for community
+                        </div>
+                        <div style="padding: 10px 0; border-bottom: 1px solid rgba(99,102,241,0.08);">
+                            <strong style="color: var(--text);">Benchmark:</strong> Comparison across 10+ state-of-the-art methods
+                        </div>
+                        <div style="padding: 10px 0;">
+                            <strong style="color: var(--text);">Open Source:</strong> Reproducible implementation for research community
+                        </div>
+                    </div>
+                </div>
+                <div class="card" style="background: rgba(99,102,241,0.05); border-color: rgba(99,102,241,0.3);">
+                    <h3 style="color: #a78bfa;">&#x1F4C8; Innovation Highlights</h3>
+                    <div style="display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px;">
+                        <span class="tag tag-primary">Graph Transformers</span>
+                        <span class="tag tag-accent">Federated Learning</span>
+                        <span class="tag tag-purple">Explainable AI</span>
+                        <span class="tag tag-green">Cloud-Native</span>
+                        <span class="tag tag-red">Adversarial Training</span>
+                        <span class="tag tag-primary">Kill Chain Mapping</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="slide-number">09 / 10</div>
+</section>
+
+
+<!-- SLIDE 10: References -->
+<section class="slide" id="slide10">
+    <div class="grid-bg"></div>
+    <div class="orb orb-3" style="top: 50%; left: 5%;"></div>
+    <div class="content">
+        <span class="tag tag-primary">Bibliography</span>
+        <h2>Key <span class="gradient-text">References & Resources</span></h2>
+        <p style="max-width: 700px; margin-bottom: 25px;">Essential research papers and review articles supporting this study</p>
+
+        <div class="grid-2">
+            <div>
+                <ol class="ref-list">
+                    <li><strong>[1]</strong> CMU SEI (2024) — "Toward the Use of AI for Advanced Persistent Threat Detection"<br><a href="https://sei.cmu.edu/library/toward-the-use-of-artificial-intelligence-ai-for-advanced-persistent-threat-detection/" target="_blank">sei.cmu.edu/library/...</a></li>
+                    <li><strong>[2]</strong> Arxiv (2025) — "APT-LLM: Embedding-Based Anomaly Detection Using Large Language Models"<br><a href="https://arxiv.org/html/2502.09385v1" target="_blank">arxiv.org/html/2502.09385v1</a></li>
+                    <li><strong>[3]</strong> Arxiv (2024) — "RAPID: Context-Aware Deep Learning for Robust APT Detection"<br><a href="https://arxiv.org/abs/2406.05362" target="_blank">arxiv.org/abs/2406.05362</a></li>
+                    <li><strong>[4]</strong> Nature Scientific Reports (2024) — "A Novel Approach for APT Attack Detection Based on Advanced Computing"<br><a href="https://www.nature.com/articles/s41598-024-72957-0" target="_blank">nature.com/articles/s41598-024-72957-0</a></li>
+                    <li><strong>[5]</strong> Springer (2024) — "Explainable Deep Learning for APTs Detection: A Review"<br><a href="https://link.springer.com/article/10.1007/s10462-024-10890-4" target="_blank">springer.com/article/10.1007/...</a></li>
+                    <li><strong>[6]</strong> Oxford Academic (2024) — "Systematic Literature Review on APT Behaviors and Detection Strategy"<br><a href="https://academic.oup.com/cybersecurity/article/10/1/tyad023/7504935" target="_blank">academic.oup.com/cybersecurity/...</a></li>
+                </ol>
+            </div>
+            <div>
+                <ol class="ref-list">
+                    <li><strong>[7]</strong> ACM (2024) — "APT Attack Detection Systems: Review of Approaches, Challenges, and Trends"<br><a href="https://dl.acm.org/doi/10.1145/3696014" target="_blank">dl.acm.org/doi/10.1145/3696014</a></li>
+                    <li><strong>[8]</strong> Journal of Big Data (2025) — "Optimized Hybrid Ensemble ML Model for Detecting APTs in Networks"<br><a href="https://journalofbigdata.springeropen.com/articles/10.1186/s40537-025-01272-w" target="_blank">journalofbigdata.springeropen.com/...</a></li>
+                    <li><strong>[9]</strong> Springer (2026) — "Collaborative APT Detection through Cloud-Edge Synergy of Graph Transformer"<br><a href="https://link.springer.com/article/10.1186/s13677-026-00940-3" target="_blank">springer.com/article/10.1186/...</a></li>
+                    <li><strong>[10]</strong> Journal of Big Data (2024) — "Advancing Cybersecurity: Comprehensive Review of AI-Driven Detection"<br><a href="https://journalofbigdata.springeropen.com/articles/10.1186/s40537-024-00957-y" target="_blank">journalofbigdata.springeropen.com/...</a></li>
+                    <li><strong>[11]</strong> ResearchGate (2024) — "APT Attribution Using Deep Reinforcement Learning"<br><a href="https://www.researchgate.net/publication/384937397_Advanced_Persistent_Threats_APT_Attribution_Using_Deep_Reinforcement_Learning" target="_blank">researchgate.net/publication/384937397</a></li>
+                    <li><strong>[12]</strong> ResearchGate (2024) — "AI-Powered Framework for Real-time Threat Detection in Cloud"<br><a href="https://www.researchgate.net/publication/391269229_AI-Powered_Framework_for_Real-time_Threat_Detection_and_Response_in_Cloud_Infrastructure" target="_blank">researchgate.net/publication/391269229</a></li>
+                </ol>
+            </div>
+        </div>
+    </div>
+    <div class="slide-number">10 / 10</div>
+</section>
+
+<script>
+    // Smooth scroll navigation
+    document.querySelectorAll('.nav-dot').forEach((dot, index) => {
+        dot.addEventListener('click', (e) => {
+            e.preventDefault();
+            document.getElementById(`slide${index + 1}`).scrollIntoView({ behavior: 'smooth' });
+        });
+    });
+
+    // Update active dot on scroll
+    const slides = document.querySelectorAll('.slide');
+    const dots = document.querySelectorAll('.nav-dot');
+
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                const slideIndex = Array.from(slides).indexOf(entry.target);
+                dots.forEach(d => d.classList.remove('active'));
+                dots[slideIndex].classList.add('active');
+            }
+        });
+    }, { threshold: 0.5 });
+
+    slides.forEach(slide => observer.observe(slide));
+</script>
+</body>
+</html>
