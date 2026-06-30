@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Activity 1 - Research Methodology Selection</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&family=Source+Sans+3:wght@300;400;500;600;700&display=swap');
+        *{margin:0;padding:0;box-sizing:border-box;}
+        :root{
+            --bg:#0b1120;--card:#1a2332;--border:rgba(148,163,184,0.1);
+            --blue:#3b82f6;--blue-lt:#93c5fd;--teal:#0891b2;--teal-lt:#67e8f9;
+            --purple:#7c3aed;--purple-lt:#c4b5fd;--green:#059669;--green-lt:#6ee7b7;
+            --red:#dc2626;--orange:#ea580c;--white:#f8fafc;--muted:#94a3b8;--secondary:#cbd5e1;
+        }
+        html{scroll-behavior:smooth;}
+        body{font-family:'Source Sans 3',sans-serif;background:var(--bg);color:var(--white);overflow-x:hidden;}
+        .slide{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:50px 60px;position:relative;overflow:hidden;}
+        .inner{position:relative;z-index:5;width:100%;max-width:1150px;}
+
+        .mesh{position:absolute;inset:0;background:radial-gradient(circle at 20% 80%,rgba(59,130,246,0.08),transparent 50%),radial-gradient(circle at 80% 20%,rgba(8,145,178,0.07),transparent 50%),radial-gradient(circle at 50% 50%,rgba(124,58,237,0.04),transparent 60%);}
+        .grid-pattern{position:absolute;inset:0;background-image:linear-gradient(rgba(148,163,184,0.03) 1px,transparent 1px),linear-gradient(90deg,rgba(148,163,184,0.03) 1px,transparent 1px);background-size:50px 50px;}
+        .glow{position:absolute;border-radius:50%;filter:blur(80px);pointer-events:none;}
+        @keyframes drift{0%,100%{transform:translateY(0) scale(1);}50%{transform:translateY(-20px) scale(1.04);}}
+        @keyframes fadeUp{from{opacity:0;transform:translateY(35px);}to{opacity:1;transform:translateY(0);}}
+        @keyframes fadeLeft{from{opacity:0;transform:translateX(-30px);}to{opacity:1;transform:translateX(0);}}
+        @keyframes fadeRight{from{opacity:0;transform:translateX(30px);}to{opacity:1;transform:translateX(0);}}
+        @keyframes scaleIn{from{opacity:0;transform:scale(0.88);}to{opacity:1;transform:scale(1);}}
+        .anim-up{animation:fadeUp .75s ease forwards;opacity:0;}
+        .anim-left{animation:fadeLeft .75s ease forwards;opacity:0;}
+        .anim-right{animation:fadeRight .75s ease forwards;opacity:0;}
+        .anim-scale{animation:scaleIn .7s ease forwards;opacity:0;}
+        .d1{animation-delay:.1s}.d2{animation-delay:.25s}.d3{animation-delay:.4s}.d4{animation-delay:.55s}.d5{animation-delay:.7s}.d6{animation-delay:.85s}
+        h1{font-family:'Poppins',sans-serif;font-size:2.6rem;font-weight:700;line-height:1.15;letter-spacing:-.02em;}
+        h2{font-family:'Poppins',sans-serif;font-size:2.1rem;font-weight:700;margin-bottom:12px;}
+        h3{font-family:'Poppins',sans-serif;font-size:1.1rem;font-weight:600;margin-bottom:10px;}
+        p{line-height:1.75;font-size:1rem;}
+        .grad{background:linear-gradient(135deg,var(--blue-lt),var(--teal-lt));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+        .sub{font-size:1.1rem;color:var(--secondary);max-width:700px;margin-bottom:30px;}
+        .card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:26px;transition:all .3s ease;}
+        .card:hover{transform:translateY(-5px);border-color:rgba(59,130,246,0.25);box-shadow:0 20px 50px rgba(0,0,0,.3);}
+        .badge{display:inline-block;padding:5px 14px;border-radius:100px;font-size:.72rem;font-weight:600;text-transform:uppercase;letter-spacing:.8px;}
+        .b-blue{background:rgba(59,130,246,.1);color:var(--blue-lt);border:1px solid rgba(59,130,246,.2);}
+        .b-teal{background:rgba(8,145,178,.1);color:var(--teal-lt);border:1px solid rgba(8,145,178,.2);}
+        .b-purple{background:rgba(124,58,237,.1);color:var(--purple-lt);border:1px solid rgba(124,58,237,.2);}
+        .b-green{background:rgba(5,150,105,.1);color:var(--green-lt);border:1px solid rgba(5,150,105,.2);}
+        .two-col{display:grid;grid-template-columns:1fr 1fr;gap:26px;}
+        .three-col{display:grid;grid-template-columns:1fr 1fr 1fr;gap:20px;}
+        .check-list{list-style:none;padding:0;}
+        .check-list li{display:flex;align-items:flex-start;gap:11px;padding:9px 0;border-bottom:1px solid var(--border);font-size:.92rem;color:var(--secondary);}
+        .check-list li:last-child{border-bottom:none;}
+        .icon{flex-shrink:0;width:22px;height:22px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:.65rem;font-weight:700;margin-top:2px;}
+        .callout{padding:18px 22px;border-radius:12px;border-left:4px solid;margin-top:16px;}
+        .c-blue{background:rgba(59,130,246,.05);border-color:var(--blue-lt);}
+        .c-green{background:rgba(5,150,105,.05);border-color:var(--green-lt);}
+        .c-teal{background:rgba(8,145,178,.05);border-color:var(--teal-lt);}
+        .divider{width:100%;height:1px;background:linear-gradient(90deg,transparent,var(--border),transparent);margin:18px 0;}
+        .slide-num{position:absolute;bottom:25px;right:36px;font-size:.78rem;color:var(--muted);letter-spacing:2px;}
+        .nav{position:fixed;right:22px;top:50%;transform:translateY(-50%);z-index:999;display:flex;flex-direction:column;gap:8px;}
+        .nav a{width:9px;height:9px;border-radius:50%;background:rgba(148,163,184,.25);transition:all .3s;}
+        .nav a:hover,.nav a.active{background:var(--blue);transform:scale(1.4);box-shadow:0 0 10px rgba(59,130,246,.5);}
+        .head-tag{display:inline-flex;align-items:center;gap:8px;padding:7px 16px;background:rgba(59,130,246,.08);border:1px solid rgba(59,130,246,.2);border-radius:100px;font-size:.8rem;font-weight:600;color:var(--blue-lt);margin-bottom:16px;}
+        .compare-table{width:100%;border-collapse:separate;border-spacing:0;border-radius:10px;overflow:hidden;font-size:.88rem;}
+        .compare-table th{background:rgba(59,130,246,.08);padding:11px 14px;text-align:left;font-weight:600;color:var(--blue-lt);border-bottom:1px solid var(--border);}
+        .compare-table td{padding:10px 14px;border-bottom:1px solid var(--border);color:var(--secondary);}
+        .compare-table tr:last-child td{border-bottom:none;}
+        .compare-table tr:hover td{background:rgba(59,130,246,.02);}
+    </style>
+</head>
+<body>
+<nav class="nav"><a href="#s1" class="active"></a><a href="#s2"></a><a href="#s3"></a><a href="#s4"></a></nav>
+
+
+<!-- SLIDE 1: Introduction & Problem Statement -->
+<section class="slide" id="s1">
+    <div class="mesh"></div><div class="grid-pattern"></div>
+    <div class="glow" style="width:380px;height:380px;background:rgba(59,130,246,.12);top:-90px;right:-60px;animation:drift 8s ease-in-out infinite;"></div>
+    <div class="glow" style="width:260px;height:260px;background:rgba(8,145,178,.1);bottom:-70px;left:-40px;animation:drift 10s ease-in-out infinite reverse;"></div>
+    <div class="inner">
+        <div class="head-tag anim-up d1"><span>&#x1F4CB;</span> Activity 1: Research Methodology Selection</div>
+        <h1 class="anim-up d2">Identifying the Right <span class="grad">Research Methodology</span></h1>
+        <p class="sub anim-up d3">Our study focuses on detecting Advanced Persistent Threats in cloud networks using artificial intelligence. Before diving into experiments, we need to select a methodology that matches the nature of our research problem and the kind of evidence we want to produce.</p>
+        <div class="two-col">
+            <div class="card anim-left d4">
+                <h3 style="color:var(--blue-lt);">Background & Problem Statement</h3>
+                <p style="font-size:.92rem;color:var(--secondary);margin-bottom:14px;">Cloud computing has become the backbone of modern enterprise infrastructure, but it has also opened new doors for sophisticated attackers. Advanced Persistent Threats are long-running, carefully planned campaigns that infiltrate networks and stay hidden for months while extracting sensitive data.</p>
+                <p style="font-size:.92rem;color:var(--secondary);">The core problem is straightforward: <strong style="color:var(--white);">traditional security tools cannot keep up with these threats.</strong> They rely on known signatures and simple rules, which APT actors easily bypass. We need intelligent systems that can learn patterns and adapt.</p>
+            </div>
+            <div class="card anim-right d5">
+                <h3 style="color:var(--teal-lt);">Research Aim & Objectives</h3>
+                <p style="font-size:.92rem;color:var(--secondary);margin-bottom:14px;"><strong style="color:var(--white);">Aim:</strong> To develop and evaluate an AI-driven detection framework capable of identifying multi-stage APT attacks in cloud network environments.</p>
+                <ul class="check-list">
+                    <li><span class="icon" style="background:rgba(5,150,105,.12);color:var(--green-lt);">1</span><span>Design a hybrid deep learning architecture for cloud traffic analysis</span></li>
+                    <li><span class="icon" style="background:rgba(5,150,105,.12);color:var(--green-lt);">2</span><span>Benchmark performance against established detection methods</span></li>
+                    <li><span class="icon" style="background:rgba(5,150,105,.12);color:var(--green-lt);">3</span><span>Evaluate real-time detection feasibility in dynamic cloud environments</span></li>
+                    <li><span class="icon" style="background:rgba(5,150,105,.12);color:var(--green-lt);">4</span><span>Provide explainable outputs that security teams can act on</span></li>
+                </ul>
+                <div class="callout c-teal" style="margin-top:14px;">
+                    <p style="font-size:.85rem;color:var(--secondary);margin:0;"><strong style="color:var(--teal-lt);">Significance:</strong> This work contributes a practical, validated AI framework that addresses documented gaps in cloud-specific APT detection, benefiting both the research community and industry practitioners.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="slide-num">01 / 04</div>
+</section>
+
+
+<!-- SLIDE 2: Research Philosophies -->
+<section class="slide" id="s2">
+    <div class="mesh"></div><div class="grid-pattern"></div>
+    <div class="glow" style="width:320px;height:320px;background:rgba(124,58,237,.1);top:15%;left:-50px;animation:drift 9s ease-in-out infinite;"></div>
+    <div class="inner">
+        <div class="head-tag anim-up d1"><span>&#x1F9ED;</span> Research Philosophy & Approach</div>
+        <h2 class="anim-up d2">Evaluating Research <span class="grad">Philosophies</span></h2>
+        <p class="sub anim-up d3">Every research project rests on philosophical assumptions about how knowledge is created. We evaluate four major philosophies below to determine which one best fits our work.</p>
+        <div class="two-col">
+            <div class="card anim-scale d4" style="border-top:3px solid var(--blue);">
+                <h3 style="color:var(--blue-lt);">&#x1F52C; Positivism</h3>
+                <p style="font-size:.88rem;color:var(--secondary);margin-bottom:12px;">Holds that reliable knowledge comes from observable, measurable phenomena. Values objectivity, hypothesis testing, and statistical verification. The researcher remains detached from the subject being studied.</p>
+                <div style="margin-bottom:8px;"><span style="font-size:.7rem;font-weight:600;color:var(--green-lt);">STRENGTHS FOR OUR TOPIC</span><p style="font-size:.82rem;color:var(--muted);margin-top:4px;">Perfectly suits our need to measure detection accuracy, compare algorithms through metrics, and produce reproducible results. Our AI models generate numerical outputs that demand statistical analysis.</p></div>
+                <div><span style="font-size:.7rem;font-weight:600;color:var(--orange);">LIMITATIONS</span><p style="font-size:.82rem;color:var(--muted);margin-top:4px;">Cannot capture the strategic reasoning of human threat actors or the contextual nuances of security decision-making. Treats the detection problem purely as a numbers game.</p></div>
+            </div>
+            <div class="card anim-scale d5" style="border-top:3px solid var(--teal);">
+                <h3 style="color:var(--teal-lt);">&#x1F4AC; Interpretivism</h3>
+                <p style="font-size:.88rem;color:var(--secondary);margin-bottom:12px;">Argues that knowledge is constructed through subjective human experience. Emphasises understanding meanings, motivations, and context rather than counting occurrences.</p>
+                <div style="margin-bottom:8px;"><span style="font-size:.7rem;font-weight:600;color:var(--green-lt);">STRENGTHS FOR OUR TOPIC</span><p style="font-size:.82rem;color:var(--muted);margin-top:4px;">Could help explore how security analysts interpret threat alerts or how organisational culture affects incident response. Valuable for human-centred security research.</p></div>
+                <div><span style="font-size:.7rem;font-weight:600;color:var(--orange);">LIMITATIONS</span><p style="font-size:.82rem;color:var(--muted);margin-top:4px;">Our research question is not about human perceptions — it is about whether an AI system can detect attacks effectively. Subjective interpretation does not help us validate model accuracy.</p></div>
+            </div>
+            <div class="card anim-scale d5" style="border-top:3px solid var(--purple);">
+                <h3 style="color:var(--purple-lt);">&#x2699; Pragmatism</h3>
+                <p style="font-size:.88rem;color:var(--secondary);margin-bottom:12px;">Takes the position that the value of knowledge depends on its practical usefulness. Supports mixing methods — whatever approach best answers the research question is acceptable.</p>
+                <div style="margin-bottom:8px;"><span style="font-size:.7rem;font-weight:600;color:var(--green-lt);">STRENGTHS FOR OUR TOPIC</span><p style="font-size:.82rem;color:var(--muted);margin-top:4px;">Allows flexibility. We could combine quantitative experiments with qualitative expert feedback to get a richer picture of system effectiveness.</p></div>
+                <div><span style="font-size:.7rem;font-weight:600;color:var(--orange);">LIMITATIONS</span><p style="font-size:.82rem;color:var(--muted);margin-top:4px;">For our specific study, the additional qualitative layer adds complexity without proportionate benefit. Our primary question is answerable through numbers alone.</p></div>
+            </div>
+            <div class="card anim-scale d6" style="border-top:3px solid var(--green);">
+                <h3 style="color:var(--green-lt);">&#x1F30D; Realism</h3>
+                <p style="font-size:.88rem;color:var(--secondary);margin-bottom:12px;">Maintains that an objective reality exists independent of our observations, but acknowledges we can only partially access it. Distinguishes between what we observe and underlying mechanisms.</p>
+                <div style="margin-bottom:8px;"><span style="font-size:.7rem;font-weight:600;color:var(--green-lt);">STRENGTHS FOR OUR TOPIC</span><p style="font-size:.82rem;color:var(--muted);margin-top:4px;">Recognises that APT behaviour has underlying causal structures we may not fully observe. Supports investigating why certain models work better than others.</p></div>
+                <div><span style="font-size:.7rem;font-weight:600;color:var(--orange);">LIMITATIONS</span><p style="font-size:.82rem;color:var(--muted);margin-top:4px;">More suited to explanatory social research. Harder to operationalise cleanly in a computational study focused on model benchmarking.</p></div>
+            </div>
+        </div>
+        <div class="callout c-blue anim-up d6" style="margin-top:22px;">
+            <p style="font-size:.9rem;color:var(--secondary);margin:0;"><strong style="color:var(--blue-lt);">Our Choice: Positivism</strong> — Because our research revolves around measurable model performance, controlled experiments, and statistical hypothesis testing, positivism provides the most coherent philosophical foundation. It aligns naturally with the deductive, quantitative nature of AI systems research.</p>
+        </div>
+    </div>
+    <div class="slide-num">02 / 04</div>
+</section>
+
+
+<!-- SLIDE 3: Research Methodology Selection & Justification -->
+<section class="slide" id="s3">
+    <div class="mesh"></div><div class="grid-pattern"></div>
+    <div class="glow" style="width:350px;height:350px;background:rgba(5,150,105,.1);bottom:-80px;right:-60px;animation:drift 11s ease-in-out infinite;"></div>
+    <div class="inner">
+        <div class="head-tag anim-up d1"><span>&#x1F4CA;</span> Methodology Selection</div>
+        <h2 class="anim-up d2">Quantitative Methodology: <span class="grad">The Natural Choice</span></h2>
+        <p class="sub anim-up d3">Given our positivist stance and the computational nature of our research, a quantitative methodology is the most appropriate path forward. Here is why the alternatives do not fit as well.</p>
+        <div class="three-col">
+            <div class="card anim-scale d4" style="border-top:3px solid var(--purple-lt);opacity:.85;">
+                <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px;"><span style="font-size:1.3rem;">&#x1F4DD;</span><h3 style="margin:0;color:var(--purple-lt);">Qualitative</h3></div>
+                <p style="font-size:.85rem;color:var(--secondary);margin-bottom:10px;">Explores meanings and experiences through interviews, focus groups, or observations. Good for understanding the "why" behind human behaviour.</p>
+                <p style="font-size:.82rem;color:var(--muted);"><strong style="color:var(--orange);">Not suitable</strong> — Our research produces numerical model outputs and network metrics. We are not investigating human perceptions or social phenomena.</p>
+            </div>
+            <div class="card anim-scale d5" style="border-top:3px solid var(--blue-lt);box-shadow:0 0 25px rgba(59,130,246,.08);">
+                <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px;"><span style="font-size:1.3rem;">&#x1F4CA;</span><h3 style="margin:0;color:var(--blue-lt);">Quantitative</h3><span class="badge b-blue" style="font-size:.55rem;">SELECTED</span></div>
+                <p style="font-size:.85rem;color:var(--secondary);margin-bottom:10px;">Relies on measurable data, statistical analysis, and controlled experiments. Tests specific hypotheses and produces generalisable results.</p>
+                <p style="font-size:.82rem;color:var(--muted);"><strong style="color:var(--green-lt);">Perfect fit</strong> — Everything about our study is quantifiable: detection rates, processing times, accuracy scores, false positive counts.</p>
+            </div>
+            <div class="card anim-scale d6" style="border-top:3px solid var(--teal-lt);opacity:.85;">
+                <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px;"><span style="font-size:1.3rem;">&#x1F500;</span><h3 style="margin:0;color:var(--teal-lt);">Mixed Methods</h3></div>
+                <p style="font-size:.85rem;color:var(--secondary);margin-bottom:10px;">Combines quantitative and qualitative approaches for a broader perspective. Useful when research questions span both numerical and experiential domains.</p>
+                <p style="font-size:.82rem;color:var(--muted);"><strong style="color:var(--orange);">Unnecessary</strong> — Would add complexity without proportional gain. Our questions are entirely answerable through computational experiments and statistical evidence.</p>
+            </div>
+        </div>
+        <div class="two-col" style="margin-top:24px;">
+            <div class="card anim-left d5">
+                <h3 style="color:var(--blue-lt);">Why Quantitative Works for Us</h3>
+                <ul class="check-list">
+                    <li><span class="icon" style="background:rgba(59,130,246,.12);color:var(--blue-lt);">&#x2713;</span><span>We train machine learning models on <strong style="color:var(--white);">numerical datasets</strong> containing millions of network flow records</span></li>
+                    <li><span class="icon" style="background:rgba(59,130,246,.12);color:var(--blue-lt);">&#x2713;</span><span>Success is measured through <strong style="color:var(--white);">concrete metrics</strong> — accuracy, precision, recall, F1-score, AUC-ROC</span></li>
+                    <li><span class="icon" style="background:rgba(59,130,246,.12);color:var(--blue-lt);">&#x2713;</span><span>We use <strong style="color:var(--white);">controlled experiments</strong> with training/testing splits and cross-validation protocols</span></li>
+                    <li><span class="icon" style="background:rgba(59,130,246,.12);color:var(--blue-lt);">&#x2713;</span><span>Conclusions rest on <strong style="color:var(--white);">statistical significance tests</strong> rather than subjective judgement</span></li>
+                </ul>
+            </div>
+            <div class="card anim-right d6">
+                <h3 style="color:var(--green-lt);">Appropriateness of Research Methods</h3>
+                <table class="compare-table">
+                    <tr><th>Method</th><th>Role in Our Study</th></tr>
+                    <tr><td style="font-weight:500;color:var(--white);">Benchmark Datasets</td><td>Training and baseline comparison (CICIDS, UNSW-NB15)</td></tr>
+                    <tr><td style="font-weight:500;color:var(--white);">Controlled Experiments</td><td>Cloud testbed with simulated APT attacks (MITRE ATT&CK)</td></tr>
+                    <tr><td style="font-weight:500;color:var(--white);">Statistical Testing</td><td>t-tests and ANOVA for comparing model performance</td></tr>
+                    <tr><td style="font-weight:500;color:var(--white);">Cross-Validation</td><td>k-fold CV ensuring robustness and generalisability</td></tr>
+                </table>
+            </div>
+        </div>
+    </div>
+    <div class="slide-num">03 / 04</div>
+</section>
+
+
+<!-- SLIDE 4: Summary & Final Justification -->
+<section class="slide" id="s4">
+    <div class="mesh"></div><div class="grid-pattern"></div>
+    <div class="glow" style="width:400px;height:400px;background:rgba(59,130,246,.08);top:50%;left:50%;transform:translate(-50%,-50%);animation:drift 7s ease-in-out infinite;"></div>
+    <div class="inner" style="text-align:center;">
+        <div class="head-tag anim-up d1" style="display:inline-flex;"><span>&#x1F3C1;</span> Summary</div>
+        <h2 class="anim-up d2">Bringing It All <span class="grad">Together</span></h2>
+        <p class="sub anim-up d3" style="margin:15px auto 35px;">Our philosophical stance and methodological choice form a coherent framework that directly supports every aspect of the research.</p>
+        <div class="two-col" style="text-align:left;">
+            <div class="card anim-left d4">
+                <h3 style="color:var(--blue-lt);text-align:center;margin-bottom:18px;">Research Design Overview</h3>
+                <table class="compare-table">
+                    <tr><th>Component</th><th>Our Decision</th></tr>
+                    <tr><td style="font-weight:500;color:var(--white);">Philosophy</td><td><span class="badge b-blue" style="font-size:.6rem;">Positivism</span></td></tr>
+                    <tr><td style="font-weight:500;color:var(--white);">Approach</td><td><span class="badge b-teal" style="font-size:.6rem;">Deductive</span></td></tr>
+                    <tr><td style="font-weight:500;color:var(--white);">Methodology</td><td><span class="badge b-green" style="font-size:.6rem;">Quantitative</span></td></tr>
+                    <tr><td style="font-weight:500;color:var(--white);">Primary Methods</td><td><span class="badge b-purple" style="font-size:.6rem;">Experiments + Benchmark Analysis</span></td></tr>
+                    <tr><td style="font-weight:500;color:var(--white);">Data Analysis</td><td><span class="badge b-blue" style="font-size:.6rem;">Statistical + ML Performance Metrics</span></td></tr>
+                </table>
+            </div>
+            <div class="card anim-right d5">
+                <h3 style="color:var(--green-lt);">Final Justification</h3>
+                <p style="font-size:.92rem;color:var(--secondary);margin-bottom:16px;">The connection between our choices is straightforward:</p>
+                <ul class="check-list">
+                    <li><span class="icon" style="background:rgba(5,150,105,.12);color:var(--green-lt);">&#x2713;</span><span><strong style="color:var(--white);">Positivism</strong> assumes knowledge comes from measurable observation — our AI models produce exactly that</span></li>
+                    <li><span class="icon" style="background:rgba(5,150,105,.12);color:var(--green-lt);">&#x2713;</span><span><strong style="color:var(--white);">Deductive approach</strong> lets us start from established ML theory, form hypotheses, and test them</span></li>
+                    <li><span class="icon" style="background:rgba(5,150,105,.12);color:var(--green-lt);">&#x2713;</span><span><strong style="color:var(--white);">Quantitative methodology</strong> provides the structured, numerical framework to evaluate our system</span></li>
+                    <li><span class="icon" style="background:rgba(5,150,105,.12);color:var(--green-lt);">&#x2713;</span><span><strong style="color:var(--white);">Experimental methods</strong> allow controlled, reproducible testing that the community can verify</span></li>
+                </ul>
+                <div class="divider"></div>
+                <p style="font-size:.88rem;color:var(--muted);font-style:italic;">Each element reinforces the others, creating a logically consistent research design suited to answering our core question with confidence.</p>
+            </div>
+        </div>
+    </div>
+    <div class="slide-num">04 / 04</div>
+</section>
+
+<script>
+const obs=new IntersectionObserver(e=>{e.forEach(en=>{if(en.isIntersecting){en.target.style.animationPlayState='running';en.target.classList.add('visible');}});},{threshold:.15});
+document.querySelectorAll('[class*="anim-"]').forEach(el=>{el.style.animationPlayState='paused';obs.observe(el);});
+const navLinks=document.querySelectorAll('.nav a');
+const slides=document.querySelectorAll('.slide');
+const navObs=new IntersectionObserver(e=>{e.forEach(en=>{if(en.isIntersecting){const i=Array.from(slides).indexOf(en.target);navLinks.forEach(l=>l.classList.remove('active'));if(navLinks[i])navLinks[i].classList.add('active');}});},{threshold:.4});
+slides.forEach(s=>navObs.observe(s));
+navLinks.forEach((l,i)=>{l.addEventListener('click',e=>{e.preventDefault();slides[i].scrollIntoView({behavior:'smooth'});});});
+</script>
+</body>
+</html>

@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Activity 2 - Data Collection Methods</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&family=Source+Sans+3:wght@300;400;500;600;700&display=swap');
+        *{margin:0;padding:0;box-sizing:border-box;}
+        :root{
+            --bg:#0b1120;--card:#1a2332;--border:rgba(148,163,184,0.1);
+            --blue:#3b82f6;--blue-lt:#93c5fd;--teal:#0891b2;--teal-lt:#67e8f9;
+            --purple:#7c3aed;--purple-lt:#c4b5fd;--green:#059669;--green-lt:#6ee7b7;
+            --red:#dc2626;--orange:#ea580c;--white:#f8fafc;--muted:#94a3b8;--secondary:#cbd5e1;
+        }
+        html{scroll-behavior:smooth;}
+        body{font-family:'Source Sans 3',sans-serif;background:var(--bg);color:var(--white);overflow-x:hidden;}
+        .slide{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:50px 60px;position:relative;overflow:hidden;}
+        .inner{position:relative;z-index:5;width:100%;max-width:1150px;}
+        .mesh{position:absolute;inset:0;background:radial-gradient(circle at 20% 80%,rgba(8,145,178,0.08),transparent 50%),radial-gradient(circle at 80% 20%,rgba(59,130,246,0.07),transparent 50%),radial-gradient(circle at 50% 50%,rgba(124,58,237,0.04),transparent 60%);}
+        .grid-pattern{position:absolute;inset:0;background-image:linear-gradient(rgba(148,163,184,0.03) 1px,transparent 1px),linear-gradient(90deg,rgba(148,163,184,0.03) 1px,transparent 1px);background-size:50px 50px;}
+        .glow{position:absolute;border-radius:50%;filter:blur(80px);pointer-events:none;}
+        @keyframes drift{0%,100%{transform:translateY(0) scale(1);}50%{transform:translateY(-20px) scale(1.04);}}
+        @keyframes fadeUp{from{opacity:0;transform:translateY(35px);}to{opacity:1;transform:translateY(0);}}
+        @keyframes fadeLeft{from{opacity:0;transform:translateX(-30px);}to{opacity:1;transform:translateX(0);}}
+        @keyframes fadeRight{from{opacity:0;transform:translateX(30px);}to{opacity:1;transform:translateX(0);}}
+        @keyframes scaleIn{from{opacity:0;transform:scale(0.88);}to{opacity:1;transform:scale(1);}}
+        .anim-up{animation:fadeUp .75s ease forwards;opacity:0;}
+        .anim-left{animation:fadeLeft .75s ease forwards;opacity:0;}
+        .anim-right{animation:fadeRight .75s ease forwards;opacity:0;}
+        .anim-scale{animation:scaleIn .7s ease forwards;opacity:0;}
+        .d1{animation-delay:.1s}.d2{animation-delay:.25s}.d3{animation-delay:.4s}.d4{animation-delay:.55s}.d5{animation-delay:.7s}.d6{animation-delay:.85s}
+        h1{font-family:'Poppins',sans-serif;font-size:2.6rem;font-weight:700;line-height:1.15;letter-spacing:-.02em;}
+        h2{font-family:'Poppins',sans-serif;font-size:2.1rem;font-weight:700;margin-bottom:12px;}
+        h3{font-family:'Poppins',sans-serif;font-size:1.1rem;font-weight:600;margin-bottom:10px;}
+        p{line-height:1.75;font-size:1rem;}
+        .grad{background:linear-gradient(135deg,var(--teal-lt),var(--blue-lt));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+        .sub{font-size:1.1rem;color:var(--secondary);max-width:720px;margin-bottom:30px;}
+        .card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:26px;transition:all .3s ease;}
+        .card:hover{transform:translateY(-5px);border-color:rgba(8,145,178,0.25);box-shadow:0 20px 50px rgba(0,0,0,.3);}
+        .badge{display:inline-block;padding:5px 14px;border-radius:100px;font-size:.72rem;font-weight:600;text-transform:uppercase;letter-spacing:.8px;}
+        .b-blue{background:rgba(59,130,246,.1);color:var(--blue-lt);border:1px solid rgba(59,130,246,.2);}
+        .b-teal{background:rgba(8,145,178,.1);color:var(--teal-lt);border:1px solid rgba(8,145,178,.2);}
+        .b-purple{background:rgba(124,58,237,.1);color:var(--purple-lt);border:1px solid rgba(124,58,237,.2);}
+        .b-green{background:rgba(5,150,105,.1);color:var(--green-lt);border:1px solid rgba(5,150,105,.2);}
+        .two-col{display:grid;grid-template-columns:1fr 1fr;gap:26px;}
+        .check-list{list-style:none;padding:0;}
+        .check-list li{display:flex;align-items:flex-start;gap:11px;padding:9px 0;border-bottom:1px solid var(--border);font-size:.92rem;color:var(--secondary);}
+        .check-list li:last-child{border-bottom:none;}
+        .icon{flex-shrink:0;width:22px;height:22px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:.65rem;font-weight:700;margin-top:2px;}
+        .callout{padding:18px 22px;border-radius:12px;border-left:4px solid;margin-top:16px;}
+        .c-blue{background:rgba(59,130,246,.05);border-color:var(--blue-lt);}
+        .c-green{background:rgba(5,150,105,.05);border-color:var(--green-lt);}
+        .c-teal{background:rgba(8,145,178,.05);border-color:var(--teal-lt);}
+        .divider{width:100%;height:1px;background:linear-gradient(90deg,transparent,var(--border),transparent);margin:18px 0;}
+        .slide-num{position:absolute;bottom:25px;right:36px;font-size:.78rem;color:var(--muted);letter-spacing:2px;}
+        .nav{position:fixed;right:22px;top:50%;transform:translateY(-50%);z-index:999;display:flex;flex-direction:column;gap:8px;}
+        .nav a{width:9px;height:9px;border-radius:50%;background:rgba(148,163,184,.25);transition:all .3s;}
+        .nav a:hover,.nav a.active{background:var(--teal);transform:scale(1.4);box-shadow:0 0 10px rgba(8,145,178,.5);}
+        .head-tag{display:inline-flex;align-items:center;gap:8px;padding:7px 16px;background:rgba(8,145,178,.08);border:1px solid rgba(8,145,178,.2);border-radius:100px;font-size:.8rem;font-weight:600;color:var(--teal-lt);margin-bottom:16px;}
+        .compare-table{width:100%;border-collapse:separate;border-spacing:0;border-radius:10px;overflow:hidden;font-size:.88rem;}
+        .compare-table th{background:rgba(8,145,178,.08);padding:11px 14px;text-align:left;font-weight:600;color:var(--teal-lt);border-bottom:1px solid var(--border);}
+        .compare-table td{padding:10px 14px;border-bottom:1px solid var(--border);color:var(--secondary);}
+        .compare-table tr:last-child td{border-bottom:none;}
+        .compare-table tr:hover td{background:rgba(8,145,178,.02);}
+    </style>
+</head>
+<body>
+<nav class="nav"><a href="#s1" class="active"></a><a href="#s2"></a><a href="#s3"></a></nav>
+
+
+<!-- SLIDE 1: Introduction to Data Collection -->
+<section class="slide" id="s1">
+    <div class="mesh"></div><div class="grid-pattern"></div>
+    <div class="glow" style="width:360px;height:360px;background:rgba(8,145,178,.12);top:-80px;right:-50px;animation:drift 8s ease-in-out infinite;"></div>
+    <div class="glow" style="width:280px;height:280px;background:rgba(124,58,237,.09);bottom:-60px;left:-40px;animation:drift 10s ease-in-out infinite reverse;"></div>
+    <div class="inner">
+        <div class="head-tag anim-up d1"><span>&#x1F4C1;</span> Activity 2: Data Collection Methods</div>
+        <h1 class="anim-up d2">Selecting Two <span class="grad">Data Collection Methods</span></h1>
+        <p class="sub anim-up d3">With a quantitative methodology in place, we now need to decide how we will actually gather the data our AI models require. For a study like ours, the data collection strategy must provide large-scale, structured, and labelled datasets that support rigorous training and testing.</p>
+
+        <div class="two-col">
+            <div class="card anim-left d4" style="border-left:4px solid var(--blue);">
+                <div style="display:flex;align-items:center;gap:12px;margin-bottom:14px;">
+                    <div style="width:42px;height:42px;border-radius:10px;background:rgba(59,130,246,.12);display:flex;align-items:center;justify-content:center;font-size:1.2rem;">&#x1F4BE;</div>
+                    <div>
+                        <h3 style="margin:0;color:var(--blue-lt);">Method 1: Secondary Data Analysis</h3>
+                        <span style="font-size:.75rem;color:var(--muted);">Publicly Available Benchmark Datasets</span>
+                    </div>
+                </div>
+                <p style="font-size:.9rem;color:var(--secondary);margin-bottom:14px;">We draw on established, peer-reviewed network intrusion datasets that the cybersecurity research community has validated over many years. These contain both normal traffic and carefully labelled attack samples, giving us a solid foundation for model training and direct comparison with published work.</p>
+                <div style="display:flex;flex-wrap:wrap;gap:8px;">
+                    <span class="badge b-blue">CICIDS 2017/2018</span>
+                    <span class="badge b-teal">UNSW-NB15</span>
+                    <span class="badge b-purple">Unraveled APT</span>
+                    <span class="badge b-green">DARPA Transparent Computing</span>
+                </div>
+            </div>
+
+            <div class="card anim-right d5" style="border-left:4px solid var(--teal);">
+                <div style="display:flex;align-items:center;gap:12px;margin-bottom:14px;">
+                    <div style="width:42px;height:42px;border-radius:10px;background:rgba(8,145,178,.12);display:flex;align-items:center;justify-content:center;font-size:1.2rem;">&#x1F9EA;</div>
+                    <div>
+                        <h3 style="margin:0;color:var(--teal-lt);">Method 2: Controlled Experiment</h3>
+                        <span style="font-size:.75rem;color:var(--muted);">Simulated Cloud Environment with Live Attacks</span>
+                    </div>
+                </div>
+                <p style="font-size:.9rem;color:var(--secondary);margin-bottom:14px;">We build a cloud-based testbed environment and run realistic attack campaigns against it using established adversary simulation frameworks. This produces fresh, cloud-native data that captures modern threat behaviours not found in older benchmark datasets.</p>
+                <div style="display:flex;flex-wrap:wrap;gap:8px;">
+                    <span class="badge b-teal">AWS/Azure Testbed</span>
+                    <span class="badge b-blue">MITRE ATT&CK Mapping</span>
+                    <span class="badge b-purple">Atomic Red Team</span>
+                    <span class="badge b-green">Custom APT Scenarios</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="callout c-teal anim-up d6" style="margin-top:22px;">
+            <p style="font-size:.9rem;color:var(--secondary);margin:0;"><strong style="color:var(--teal-lt);">Why two methods instead of one?</strong> Existing benchmark datasets give us established baselines so we can compare fairly with prior work. Our simulated environment fills a well-documented gap in the literature by producing cloud-specific APT data that older datasets simply do not contain.</p>
+        </div>
+    </div>
+    <div class="slide-num">01 / 03</div>
+</section>
+
+
+<!-- SLIDE 2: Justification for Each Method -->
+<section class="slide" id="s2">
+    <div class="mesh"></div><div class="grid-pattern"></div>
+    <div class="glow" style="width:300px;height:300px;background:rgba(59,130,246,.1);top:10%;right:-40px;animation:drift 9s ease-in-out infinite;"></div>
+    <div class="inner">
+        <div class="head-tag anim-up d1"><span>&#x1F50D;</span> Detailed Justification</div>
+        <h2 class="anim-up d2">Why These Methods <span class="grad">Work for Our Study</span></h2>
+        <p class="sub anim-up d3">Each method addresses a different aspect of our data needs. Together they ensure we have both the breadth for fair comparison and the depth for cloud-specific validation.</p>
+
+        <div class="two-col">
+            <div class="anim-left d4">
+                <div class="card" style="margin-bottom:18px;">
+                    <h3 style="color:var(--blue-lt);margin-bottom:14px;">&#x1F4BE; Secondary Data — The Case For It</h3>
+                    <ul class="check-list">
+                        <li>
+                            <span class="icon" style="background:rgba(59,130,246,.12);color:var(--blue-lt);">&#x2713;</span>
+                            <span><strong style="color:var(--white);">Community-validated</strong> — These datasets have been used in hundreds of published studies, which means our results can be directly compared to existing work</span>
+                        </li>
+                        <li>
+                            <span class="icon" style="background:rgba(59,130,246,.12);color:var(--blue-lt);">&#x2713;</span>
+                            <span><strong style="color:var(--white);">Pre-labelled attacks</strong> — Each record is already tagged with its traffic type, eliminating the need for manual annotation and reducing human bias</span>
+                        </li>
+                        <li>
+                            <span class="icon" style="background:rgba(59,130,246,.12);color:var(--blue-lt);">&#x2713;</span>
+                            <span><strong style="color:var(--white);">Massive scale</strong> — Millions of network flow records provide enough data volume for deep learning models that are notoriously data-hungry</span>
+                        </li>
+                        <li>
+                            <span class="icon" style="background:rgba(59,130,246,.12);color:var(--blue-lt);">&#x2713;</span>
+                            <span><strong style="color:var(--white);">Reproducibility</strong> — Anyone can download the same data and replicate our experiments, which is essential for credible research</span>
+                        </li>
+                    </ul>
+                    <div class="callout c-blue" style="margin-top:14px;">
+                        <p style="font-size:.85rem;color:var(--secondary);margin:0;"><strong style="color:var(--blue-lt);">How it helps our research:</strong> These datasets serve as the training foundation and allow us to benchmark our proposed model against state-of-the-art methods using identical evaluation conditions.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="anim-right d5">
+                <div class="card" style="margin-bottom:18px;">
+                    <h3 style="color:var(--teal-lt);margin-bottom:14px;">&#x1F9EA; Controlled Experiment — The Case For It</h3>
+                    <ul class="check-list">
+                        <li>
+                            <span class="icon" style="background:rgba(8,145,178,.12);color:var(--teal-lt);">&#x2713;</span>
+                            <span><strong style="color:var(--white);">Cloud-native patterns</strong> — Captures API abuse, container escape attempts, and lateral movement tactics that are unique to cloud infrastructure</span>
+                        </li>
+                        <li>
+                            <span class="icon" style="background:rgba(8,145,178,.12);color:var(--teal-lt);">&#x2713;</span>
+                            <span><strong style="color:var(--white);">Current threat landscape</strong> — Simulates 2024-2025 APT tactics, techniques, and procedures that older benchmark datasets simply cannot reflect</span>
+                        </li>
+                        <li>
+                            <span class="icon" style="background:rgba(8,145,178,.12);color:var(--teal-lt);">&#x2713;</span>
+                            <span><strong style="color:var(--white);">Full variable control</strong> — We decide exactly which attacks to execute, at what times, and at what intensity, giving us precise ground truth labels</span>
+                        </li>
+                        <li>
+                            <span class="icon" style="background:rgba(8,145,178,.12);color:var(--teal-lt);">&#x2713;</span>
+                            <span><strong style="color:var(--white);">Addresses a research gap</strong> — Multiple review papers have noted the lack of cloud-specific APT datasets as a major limitation in the field</span>
+                        </li>
+                    </ul>
+                    <div class="callout c-teal" style="margin-top:14px;">
+                        <p style="font-size:.85rem;color:var(--secondary);margin:0;"><strong style="color:var(--teal-lt);">How it helps our research:</strong> The simulated environment validates that our model works not just on historical data, but also on fresh, realistic cloud scenarios that represent the threats organisations actually face today.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="slide-num">02 / 03</div>
+</section>
+
+
+<!-- SLIDE 3: Summary & How Methods Support Research -->
+<section class="slide" id="s3">
+    <div class="mesh"></div><div class="grid-pattern"></div>
+    <div class="glow" style="width:400px;height:400px;background:rgba(5,150,105,.09);top:50%;left:50%;transform:translate(-50%,-50%);animation:drift 7s ease-in-out infinite;"></div>
+    <div class="inner">
+        <div class="head-tag anim-up d1" style="display:inline-flex;"><span>&#x1F3C1;</span> Bringing It Together</div>
+        <h2 class="anim-up d2">How Our Data Collection <span class="grad">Supports the Research</span></h2>
+        <p class="sub anim-up d3">Both methods work in tandem to ensure our AI detection system is trained on robust data and validated under realistic conditions.</p>
+
+        <div class="two-col">
+            <div class="card anim-left d4">
+                <h3 style="color:var(--teal-lt);text-align:center;margin-bottom:16px;">Data Collection Overview</h3>
+                <table class="compare-table">
+                    <tr><th>Aspect</th><th>Method 1: Secondary Data</th><th>Method 2: Experiment</th></tr>
+                    <tr><td style="font-weight:500;color:var(--white);">Data Source</td><td>Public benchmark datasets</td><td>Our cloud testbed</td></tr>
+                    <tr><td style="font-weight:500;color:var(--white);">Scale</td><td>Millions of records</td><td>Thousands (targeted)</td></tr>
+                    <tr><td style="font-weight:500;color:var(--white);">Labelling</td><td>Pre-labelled by authors</td><td>Ground truth from simulation</td></tr>
+                    <tr><td style="font-weight:500;color:var(--white);">Cloud Specific?</td><td>Partially (generic network)</td><td>Fully cloud-native</td></tr>
+                    <tr><td style="font-weight:500;color:var(--white);">Primary Role</td><td>Training + benchmarking</td><td>Validation + gap filling</td></tr>
+                    <tr><td style="font-weight:500;color:var(--white);">Reproducible?</td><td>Fully (public access)</td><td>Via documented procedure</td></tr>
+                </table>
+            </div>
+
+            <div class="anim-right d5">
+                <div class="card" style="margin-bottom:18px;">
+                    <h3 style="color:var(--green-lt);">Why This Combination Works</h3>
+                    <ul class="check-list">
+                        <li>
+                            <span class="icon" style="background:rgba(5,150,105,.12);color:var(--green-lt);">&#x2713;</span>
+                            <span><strong style="color:var(--white);">Breadth meets depth</strong> — Benchmarks give us breadth for fair comparison; the experiment gives us depth for cloud-specific validation</span>
+                        </li>
+                        <li>
+                            <span class="icon" style="background:rgba(5,150,105,.12);color:var(--green-lt);">&#x2713;</span>
+                            <span><strong style="color:var(--white);">Historical meets current</strong> — We test against both established attack patterns and the latest APT techniques in cloud environments</span>
+                        </li>
+                        <li>
+                            <span class="icon" style="background:rgba(5,150,105,.12);color:var(--green-lt);">&#x2713;</span>
+                            <span><strong style="color:var(--white);">Community meets novelty</strong> — Published datasets let peers replicate our work; simulation data contributes something genuinely new to the field</span>
+                        </li>
+                        <li>
+                            <span class="icon" style="background:rgba(5,150,105,.12);color:var(--green-lt);">&#x2713;</span>
+                            <span><strong style="color:var(--white);">Aligns with methodology</strong> — Both methods produce structured, numerical data perfectly suited to quantitative analysis</span>
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="callout c-green anim-up d6">
+                    <p style="font-size:.9rem;color:var(--secondary);margin:0;">
+                        <strong style="color:var(--green-lt);">Final thought:</strong> By combining a well-established data source with a purpose-built experimental environment, we cover both the rigour expected by the academic community and the practical relevance demanded by industry. Neither method alone would be sufficient, but together they provide exactly the evidence base our research questions require.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="slide-num">03 / 03</div>
+</section>
+
+<script>
+const obs=new IntersectionObserver(e=>{e.forEach(en=>{if(en.isIntersecting){en.target.style.animationPlayState='running';en.target.classList.add('visible');}});},{threshold:.15});
+document.querySelectorAll('[class*="anim-"]').forEach(el=>{el.style.animationPlayState='paused';obs.observe(el);});
+const navLinks=document.querySelectorAll('.nav a');
+const slides=document.querySelectorAll('.slide');
+const navObs=new IntersectionObserver(e=>{e.forEach(en=>{if(en.isIntersecting){const i=Array.from(slides).indexOf(en.target);navLinks.forEach(l=>l.classList.remove('active'));if(navLinks[i])navLinks[i].classList.add('active');}});},{threshold:.4});
+slides.forEach(s=>navObs.observe(s));
+navLinks.forEach((l,i)=>{l.addEventListener('click',e=>{e.preventDefault();slides[i].scrollIntoView({behavior:'smooth'});});});
+</script>
+</body>
+</html>
